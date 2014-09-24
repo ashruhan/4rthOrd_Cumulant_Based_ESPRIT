@@ -31,6 +31,7 @@ for Averaged_sample = 1:Averaged_samples;
         
         R1 = s1_Noise*s1_Noise';
         R2 = s1_Noise*s2_Noise';
+        
         A=pinv(R1)*R2;
         [u,c] = eig(A);
         
