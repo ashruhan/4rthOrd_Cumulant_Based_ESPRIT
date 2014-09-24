@@ -3,31 +3,28 @@
 Magnitude_1 = 1;
 Magnitude_2 = 1/2;
 
-% Pol_ground = [1;1;0];  Pol_Cum_ground = [1;0;0]; %ground
-% Pol_vegitation = [1;0;1]; Pol_Cum_vegitation = [0;1;0]; %vegitation
-
 Phase_1 = pi/6;
 Phase_2 = pi/4;
 
-
+array_size = 6;
 Window = 100;    %size of window
 Averaged_samples = 10;
 Noise_weight = 0.1;
-
+X = zeros(1,6);
 phi1=zeros(Averaged_samples,1); phi2=zeros(Averaged_samples,1);
 mag1=zeros(Averaged_samples,1); mag2=zeros(Averaged_samples,1);
 
 
-%% Matrix Calculations
-% Implimenting a window. Esprit and SR techniques
+%% Two Element Array size
+% A on Case 1
 for Averaged_sample = 1:Averaged_samples;
 %     Noise = Averaged_sample*Noise_weight;
-
-        s1_Noise =...
+    for pos = 1:array_size;
+        X(pos) =...
               Magnitude_1*exp(1i*2*pi*rand)*exp(1i*Phase_1)...
             + Magnitude_2*exp(1i*2*pi*rand)*exp(1i*Phase_2)...
             + Noise*exp(1i*2*pi*rand);
-                
+    end    
         p1=[s1_Noise(1,:).*s1_Noise(2,:)...
             s1_Noise(1,:).*s1_Noise(3,:)...
             s1_Noise(2,:).*s1_Noise(3,:)];
