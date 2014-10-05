@@ -10,25 +10,29 @@ array_size = 6;
 Averaged_samples = 10;
 
 X = zeros(1,array_size);
+
 phase1 = zeros(1,Averaged_samples);
 phase2 = zeros(1,Averaged_samples);
 
-comp_1 = zeros(1,Averaged_samples);
-comp_2 = zeros(1,Averaged_samples);
 %% Two Element Array size
 % A on Case 1
+
 for Averaged_sample = 1:Averaged_samples;
-    phi_one = rand();
-    phi_two = rand();
+    
+    phi_one = 1i*2*pi*rand;
+    phi_two = 1i*2*pi*rand;
+    
     for pos = 1:array_size;
         
         distance = pos/2;
-        X(1,pos) = g_weight*exp(1i*2*pi*phi_one)*exp(-1i*distance*sin(g_phse))... %Ground
-            + v_weight*exp(1i*2*pi*phi_two)*exp(-1i*distance*sin(v_phase))...  %Vegetaion
-            + n_weight*sqrt(-2*log(1-rand))*exp(1i*2*pi*rand);  %Noise
+        
+        X(1,pos) = g_weight*exp(phi_one)*exp(-1i*distance*sin(g_phse))... %Ground
+            + v_weight*exp(phi_two)*exp(-1i*distance*sin(v_phase))...  %Vegetaion
+            + n_weight*sqrt(-2.*log(1-rand))*exp(1i*2*pi*rand);  %Noise
     end
     
     Y1 = [X(1,1); X(1,2)]; Y2 = [X(1,5);X(1,6)]; %Baseline = 4d
+    
     % Y1 = [X(1,2),X(1,3)]; Y2 = [X(1,4),X(1,5)]; %Baseline = 2d
     %    Y1 = [X(1,3),X(1,4)]; Y2 = [X(1,4),X(1,5)]; %Baseline = d
     %     Y1 = [X(1,2),X(1,3),X(1,4)]; Y2 = [X(1,3),X(1,4),X(1,5)]; %Baseline = d
@@ -40,12 +44,13 @@ for Averaged_sample = 1:Averaged_samples;
     A =  bsxfun(@times,R1,R2');
     
     [u,uv] = eig(A);
-    [~,kk]=sort(angle(diag(uv)),'ascend');
     
+    [~,kk]=sort(abs(angle(diag(uv)) - sin(g_phse)),'ascend');
     phase1(1,Averaged_sample) = phase1(Averaged_sample) + angle(uv(kk(1),kk(1)));
-    phase2(1,Averaged_sample) = phase2(Averaged_sample) + angle(uv(kk(2),kk(2)));
-    comp_1(1,Averaged_sample) = comp_1(Averaged_sample) + phi_one;
-    comp_2(1,Averaged_sample) = comp_2(Averaged_sample) + phi_two;
+    
+    [~,kk]=sort(abs(angle(diag(uv)) - sin(v_phase)),'ascend');
+    phase2(1,Averaged_sample) = phase2(Averaged_sample) + angle(uv(kk(1),kk(1)));
+    
 end
 
 %% Ploting Results
@@ -53,10 +58,11 @@ end
 figure(1)
 plot(phase1,'b+');
 hold on;
-plot(comp_1)
+plot(phase2,'r+')
 hold off;
 
-figure(2)
-plot(phase2,'b+');hold on;
-plot(comp_2);
-hold off;
+% figure(3)
+% plot(angle(X),'b+');
+% hold on;
+% plot(abs(X),'r+');
+% hold off;
