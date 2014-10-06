@@ -38,18 +38,15 @@ for Averaged_sample = 1:Averaged_samples;
     %     Y1 = [X(1,2),X(1,3),X(1,4)]; Y2 = [X(1,3),X(1,4),X(1,5)]; %Baseline = d
     %     Y1 = [X(1,1),X(1,2),X(1,3),X(1,4)]; Y2 = [X(1,2),X(1,3),X(1,4),X(1,5)]; %Baseline = d
     
-    R1 = bsxfun(@times, Y1,Y1');
+    R1 = bsxfun(@times, Y1,Y1'); % bsxfun is a Faster outer Product than Y1*Y1'
     R2 =  bsxfun(@times, Y1,Y2');
-    
     A =  bsxfun(@times,R1,R2');
     
     [u,uv] = eig(A);
+    [~,kk]=sort(angle(diag(uv)),'ascend');
     
-    [~,kk]=sort(abs(angle(diag(uv)) - sin(g_phse)),'ascend');
     phase1(1,Averaged_sample) = phase1(Averaged_sample) + angle(uv(kk(1),kk(1)));
-    
-    [~,kk]=sort(abs(angle(diag(uv)) - sin(v_phase)),'ascend');
-    phase2(1,Averaged_sample) = phase2(Averaged_sample) + angle(uv(kk(1),kk(1)));
+    phase2(1,Averaged_sample) = phase2(Averaged_sample) + angle(uv(kk(2),kk(2)));
     
 end
 
@@ -61,8 +58,3 @@ hold on;
 plot(phase2,'r+')
 hold off;
 
-% figure(3)
-% plot(angle(X),'b+');
-% hold on;
-% plot(abs(X),'r+');
-% hold off;
