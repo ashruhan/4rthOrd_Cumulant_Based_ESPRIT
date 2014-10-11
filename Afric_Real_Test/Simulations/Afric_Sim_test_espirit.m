@@ -24,7 +24,7 @@ for Averaged_sample = 1:Averaged_samples;
         v =  Pol_vegitation*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
         
         s1 = alpha*g + beta*v;
-        s2 = exp(1i*ground_offset)*g + exp(1i*vegitation_offset)*v;
+        s2 = alpha*exp(1i*ground_offset)*g + alpha*exp(1i*vegitation_offset)*v;
         
         s1_Noise = s1 + Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
         s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
