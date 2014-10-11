@@ -4,15 +4,14 @@
 alpha = 1; %ground weighting factor
 beta = 1;   %veg weighting factor
 Pol_ground = [1;1;0]; %Multivatiant Ground
-Pol_vegitation = [1;1;1]; %Multivariant Vegitation
+Pol_vegitation = [1;0;1]; %Multivariant Vegitation
 ground_offset = -pi/3; % Ground Interferomitry offset
-vegitation_offset = pi/6;    % Vegitation Interferomitry offset
+vegitation_offset = -pi/6;    % Vegitation Interferomitry offset
 Window = 100;    %size of Ensamble Average Window
-Averaged_samples = 10;
-Noise_weight = 0.1;
-Noise = 10; % Added Noise to the System
-phi1=zeros(Averaged_samples,1); phi2=zeros(Averaged_samples,1);
-mag1=zeros(Averaged_samples,1); mag2=zeros(Averaged_samples,1);
+Averaged_samples = 20;
+Noise_weight = 0.1;% Added Noise to the System
+phi1 = zeros(Averaged_samples,1); phi2 = zeros(Averaged_samples,1);
+mag1 = zeros(Averaged_samples,1); mag2 = zeros(Averaged_samples,1);
 
 %% Matrix Calculations
 % Implimenting a window. Esprit and SR techniques
@@ -35,16 +34,16 @@ for Averaged_sample = 1:Averaged_samples;
         A=pinv(R1)*R2;
         [u,c] = eig(A);
         
-        s1 = abs(Pol_ground'*u);
-        [~,kk] = sort(s1,'descend');
+        sg = abs(Pol_ground'*u);
+        [~,kk] = sort(sg,'descend');
         
-        phi1(Averaged_sample) = phi1(Averaged_sample) + 0.5*angle(c(kk(1),kk(1)))/Window;
+        phi1(Averaged_sample) = phi1(Averaged_sample) + angle(c(kk(1),kk(1)))/Window;
         mag1(Averaged_sample) = mag1(Averaged_sample) + abs(c(kk(1),kk(1)))/Window;
         
-        s2 = abs(Pol_vegitation'*u);
-        [ss,kk] = sort(s2,'descend');
+        sv = abs(Pol_vegitation'*u);
+        [~,kk] = sort(sv,'descend');
         
-        phi2(Averaged_sample) = phi2(Averaged_sample) + 0.5*angle(c(kk(1),kk(1)))/Window;
+        phi2(Averaged_sample) = phi2(Averaged_sample) + angle(c(kk(1),kk(1)))/Window;
         mag2(Averaged_sample) = mag2(Averaged_sample) + abs(c(kk(1),kk(1)))/Window;
         
     end
