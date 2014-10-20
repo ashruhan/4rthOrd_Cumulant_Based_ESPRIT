@@ -41,13 +41,19 @@ for row = 1:ylength;
             
         end
         
-        S1 = [s1.h.*s1.v;s1.h.*s1.x;s1.v.*s1.x];
-        S2 = [s2.h.*s2.v;s2.h.*s2.x;s2.v.*s2.x];
+        S1 = [s1.h.*s1.v;
+            s1.h.*s1.x;
+            s1.v.*s1.x];
+        
+        S2 = [s2.h.*s2.v;
+            s2.h.*s2.x;
+            s2.v.*s2.x];
         
         
-        R1 = S1*S1';  R2 = S1*S2';   A = pinv(R1)*R2;
-        
-        [~,uv] = eig(A);
+        R1 = S1*S1';  
+        R2 = S1*S2';   
+               
+        [~,uv] = eig(pinv(R1)*R2);
         
         [~,kk]=sort(angle(diag(uv)),'ascend');
         
