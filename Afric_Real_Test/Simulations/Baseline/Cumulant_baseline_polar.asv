@@ -21,7 +21,7 @@ angle2 = 0;
 % Implimenting an average loop of x samples
 for Averaged_sample = 1:Averaged_samples;
     
-    phi_one = 1i*2*pi*rand; 
+    phi_one = 1i*2*pi*rand;
     phi_two = 1i*2*pi*rand;
     
     position = 1:array_size;
@@ -40,6 +40,16 @@ for Averaged_sample = 1:Averaged_samples;
     S1 = [signal_Noise(:,1),signal_Noise(:,2)];
     S2 = [signal_Noise(:,2),signal_Noise(:,3)];
     
+    p11 = [signal_Noise(1,1)*signal_Noise(2,1),signal_Noise(1,1)*signal_Noise(3,1),signal_Noise(2,1),signal_Noise(3,1)];
+    
+    p12 = [signal_Noise(1,2)*signal_Noise(2,2),signal_Noise(1,2)*signal_Noise(3,2),signal_Noise(2,2),signal_Noise(3,2)];
+    
+    
+    p12 = [signal_Noise(1,2)*signal_Noise(2,2),signal_Noise(1,2)*signal_Noise(3,2),signal_Noise(2,2),signal_Noise(3,2)];
+    
+    
+    p22 = [signal_Noise(1,2)*signal_Noise(2,2),signal_Noise(1,2)*signal_Noise(3,2),signal_Noise(2,2),signal_Noise(3,2)];
+    
     R1 = S1*S1';
     R2 = S1*S2';
     
@@ -50,12 +60,11 @@ for Averaged_sample = 1:Averaged_samples;
     [n,kk] = sort(sg,'descend');
     
     angle1 = angle1 + angle(c(kk(1),kk(1)));
-
+    
     sv = abs(Pol_vegitation'*u);
     [~,kk] = sort(sv,'descend');
     
     angle2 = angle2 + angle(c(kk(1),kk(1)));
-     
 end
 angle1 = angle1/Averaged_sample;
 angle2 = angle2/Averaged_sample;

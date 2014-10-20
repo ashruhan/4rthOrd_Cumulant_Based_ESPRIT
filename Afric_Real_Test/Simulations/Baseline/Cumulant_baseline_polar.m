@@ -1,6 +1,6 @@
-%% Afric_Sim_test_espirit
+%% Espirit_baseline_polar
 %% Initializations
-% Setting up the enviornment\
+% Setting up the enviornment
 clear;clc;
 alpha = 1; %ground weighting factor
 beta = 1;   %veg weighting factor
@@ -9,11 +9,8 @@ Noise_weight = 0;% Added Noise to the System
 Pol_ground = [1;1;0]./sqrt(2); %Multivatiant Ground
 Pol_vegitation = [1;0;1]./sqrt(2); %Multivariant Vegitation
 
-ground_angle = pi/8; %22
-vegitation_angle = pi/4;%30
-
-sin(ground_angle*180/pi)
-sin(vegitation_angle*180/pi)
+ground_angle = pi/3; %60
+vegitation_angle = pi/6;%30
 
 array_size = 6;
 Averaged_samples = 100;
@@ -40,11 +37,24 @@ for Averaged_sample = 1:Averaged_samples;
     
     signal_Noise = signal + Noise_weight*sqrt(-2*log(1-rand(3,array_size))).*exp(1i*2*pi*rand(3,array_size));
     
-    S1 = [signal_Noise(:,1),signal_Noise(:,2)];
-    S2 = [signal_Noise(:,5),signal_Noise(:,6)];
+%     S1 = [signal_Noise(:,1),signal_Noise(:,2)];
+%     S2 = [signal_Noise(:,2),signal_Noise(:,3)];
     
-    R1 = S1*S1';
-    R2 = S1*S2';
+    p11 = [signal_Noise(1,1)*signal_Noise(2,1),signal_Noise(1,1)*signal_Noise(3,1),signal_Noise(2,1)*signal_Noise(3,1)];
+    
+    p12 = [signal_Noise(1,2)*signal_Noise(2,2),signal_Noise(1,2)*signal_Noise(3,2),signal_Noise(2,2)*signal_Noise(3,2)];
+    
+    
+    p21 = [signal_Noise(1,2)*signal_Noise(2,2),signal_Noise(1,2)*signal_Noise(3,2),signal_Noise(2,2)*signal_Noise(3,2)];
+    
+    
+    p22 = [signal_Noise(1,3)*signal_Noise(2,3),signal_Noise(1,3)*signal_Noise(3,3),signal_Noise(2,3)*signal_Noise(3,3)];
+    
+    R1 = p11'*p12;
+    R2 = p21'*p22;
+    
+    %R1 = P1*P1';
+    %R2 = P1*P2';
     
     A=pinv(R1)*R2;
     [u,c] = eig(A);
@@ -52,22 +62,19 @@ for Averaged_sample = 1:Averaged_samples;
     sg = abs(Pol_ground'*u);
     [n,kk] = sort(sg,'descend');
     
-    angle1 = angle1 + angle(c(kk(1),kk(1))).^2;
-    
-    % phi1(Averaged_sample) = phi1(Averaged_sample) + angle(c(kk(1),kk(1)))/2;
-    %    mag1(Averaged_sample) = mag1(Averaged_sample) + abs(c(kk(1),kk(1)));
+    angle1 = angle1 + angle(c(kk(1),kk(1)));
     
     sv = abs(Pol_vegitation'*u);
     [~,kk] = sort(sv,'descend');
     
-    angle2 = angle2 + (angle(c(kk(1),kk(1)))).^2;
-    
-    %phi2(Averaged_sample) = phi2(Averaged_sample) + angle(c(kk(1),kk(1)))/2;
-    %   mag2(Averaged_sample) = mag2(Averaged_sample) + abs(c(kk(1),kk(1)));
-    
+    angle2 = angle2 + angle(c(kk(1),kk(1)));
 end
-angle1 = sqrt(angle1)/Averaged_sample;
-angle2 = sqrt(angle2)/Averaged_sample;
+angle1 = angle1/Averaged_sample;
+angle2 = angle2/Averaged_sample;
+
+sind(ground_angle*180/pi)
+sind(vegitation_angle*180/pi)
+
 angle1*180/pi
 angle2*180/pi
 %% Ploting Results
