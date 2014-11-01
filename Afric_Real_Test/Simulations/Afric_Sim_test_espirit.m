@@ -2,9 +2,9 @@
 clc;clear all;
 %% Initializations
 % Setting up the enviornment
-g_weight = 0.5; %ground weighting factor
+g_weight = 1; %ground weighting factor
 v_weight = 1;   %veg weighting factor
-n_weight = 1*10^(-1);% Added Noise to the System
+n_weight = 1*10^(-3);% Added Noise to the System
 
 Pol_ground = [1;1;0]; %Multivatiant Ground
 Pol_vegitation = [1;0;1]; %Multivariant Vegitation
@@ -58,6 +58,15 @@ for Averaged_sample = 1:Averaged_samples;
 end
 
 %% Ploting Results
+
+R = est_ground_angle*180/pi - -1*ones(Averaged_samples,1)*ground_offset*180/pi;
+% R2 = atan((est_ground_angle*180/pi)./(-1*ones(Averaged_samples,1)*ground_offset*180/pi));
+figure(3)
+% subplot(2,1,1)
+plot(R,'--')
+% subplot(2,1,2)
+% plot(R2)
+
 figure(1);title('Ground angle in degrees');
 subplot(2,1,1)
 plot(est_ground_angle*180/pi,'bo'); %Estimated ground angle

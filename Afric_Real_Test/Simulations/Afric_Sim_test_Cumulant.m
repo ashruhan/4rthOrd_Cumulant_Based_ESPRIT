@@ -1,9 +1,9 @@
 %% Afric_Sim_test_Cumulant
 clc;clear all;
 %% Initializations
-g_weight = 0.5; %ground weighting factor
+g_weight = 1; %ground weighting factor
 v_weight = 1;   %veg weighting factor
-n_weight = 1*10^(-1);
+n_weight = 1*10^(-3);
 
 Pol_ground = [1;1;0];  Pol_Cum_ground = [1;0;0]; %ground
 Pol_vegitation = [1;0;1]; Pol_Cum_vegitation = [0;1;0]; %vegitation
@@ -62,8 +62,15 @@ for Averaged_sample = 1:Averaged_samples;
     end
 end
 %% Ploting Results
+R = est_ground_angle*180/pi - -1*ones(Averaged_samples,1)*ground_offset*180/pi;
+% R2 = atan((est_ground_angle*180/pi)./(-1*ones(Averaged_samples,1)*ground_offset*180/pi));
+figure(6)
+% subplot(2,1,1)
+plot(R,'--')
+% subplot(2,1,2)
+% plot(R2)
 
-figure(3);title('Ground angle in degrees');
+figure(5);title('Ground angle in degrees');
 subplot(2,1,1)
 plot(est_ground_angle*180/pi,'bo'); %Estimated ground angle
 hold on;
