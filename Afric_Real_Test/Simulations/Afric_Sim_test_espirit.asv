@@ -2,9 +2,9 @@
 clc;clear all;
 %% Initializations
 % Setting up the enviornment
-g_weight = 0.5; %ground weighting factor
-v_weight = 1;   %veg weighting factor
-n_weight = 1*10^(-1);% Added Noise to the System
+g_weight = 0.1; %ground weighting factor
+v_weight = 0.5;   %veg weighting factor
+n_weight = 1*10^(-3);% Added Noise to the System
 
 Pol_ground = [1;1;0]; %Multivatiant Ground
 Pol_vegitation = [1;0;1]; %Multivariant Vegitation

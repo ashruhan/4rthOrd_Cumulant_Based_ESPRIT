@@ -1,16 +1,18 @@
 %% Afric_Sim_test_Cumulant
 clc;clear all;
 %% Initializations
-g_weight = 1; %ground weighting factor
+g_weight = 0.5; %ground weighting factor
 v_weight = 1;   %veg weighting factor
 n_weight = 1*10^(-1);
+
 Pol_ground = [1;1;0];  Pol_Cum_ground = [1;0;0]; %ground
 Pol_vegitation = [1;0;1]; Pol_Cum_vegitation = [0;1;0]; %vegitation
-ground_offset = -pi/16; % ground interferomitry offset
-vegitation_offset = -pi/24;    % veg interferomitry offset
+
+ground_offset = -pi/3; % ground interferomitry offset
+vegitation_offset = -pi/6;    % veg interferomitry offset
 
 Window = 100;    %size of window
-Averaged_samples = 1000;
+Averaged_samples = 50;
 
 est_ground_angle=zeros(Averaged_samples,1); est_vegitation_angle=zeros(Averaged_samples,1);
 % mag1=zeros(Averaged_samples,1); mag2=zeros(Averaged_samples,1);
