@@ -13,13 +13,13 @@ ground_offset = pi/3; % Ground Interferomitry offset
 vegitation_offset = -pi/3;    % Vegitation Interferomitry offset
 
 Window = 100;    %size of Ensamble Average Window
-Averaged_samples = 50;
+Noise_samples = 50;
 
-g_mag = zeros(Averaged_samples,1); v_mag = zeros(Averaged_samples,1);
-est_ground_angle = zeros(Averaged_samples,1); est_vegitation_angle = zeros(Averaged_samples,1);
+g_mag = zeros(Noise_samples,1); v_mag = zeros(Noise_samples,1);
+est_ground_angle = zeros(Noise_samples,1); est_vegitation_angle = zeros(Noise_samples,1);
 %% Matrix Calculations
 % Implimenting a window. Esprit and SR techniques
-for Averaged_sample = 1:Averaged_samples;
+for Averaged_sample = 1:Noise_samples;
     Noise = Averaged_sample*n_weight;
     for i = 1:Window
         
@@ -55,29 +55,31 @@ for Averaged_sample = 1:Averaged_samples;
         
     end
 end
-temp = 1:Averaged_samples;
+temp = 1:Noise_samples;
 n_snr = 10*log10(1./(temp*n_weight).^2)';
 %% Ploting Results
-g_error = est_ground_angle*180/pi - -1*ones(Averaged_samples,1)*ground_offset*180/pi;
-v_error = est_vegitation_angle*180/pi - -1*ones(Averaged_samples,1)*vegitation_offset*180/pi;
-figure(1)
+g_error = est_ground_angle*180/pi - -1*ones(Noise_samples,1)*ground_offset*180/pi;
+v_error = est_vegitation_angle*180/pi - -1*ones(Noise_samples,1)*vegitation_offset*180/pi;
+figure(1);title('Ground in blue Veg in red');
 hold on;
 plot(n_snr,g_error,'b')
 plot(n_snr,v_error,'r')
+xlabel('SNR dB');ylabel('error in degrees')
 hold off;
 
 figure(2);title('Ground and Vegitation angle in degrees');
 plot(n_snr,est_ground_angle*180/pi,'bo'); %Estimated ground angle
 hold on;
-plot(n_snr,-1*ones(Averaged_samples,1)*ground_offset*180/pi,'b.'); %actual Ground Phase
+plot(n_snr,-1*ones(Noise_samples,1)*ground_offset*180/pi,'b.'); %actual Ground Phase
 plot(n_snr,est_vegitation_angle*180/pi,'ro'); %Estimated Vegitation angle
-plot(n_snr,-1*ones(Averaged_samples,1)*vegitation_offset*180/pi,'r.'); %actual Vegitation phase
+plot(n_snr,-1*ones(Noise_samples,1)*vegitation_offset*180/pi,'r.'); %actual Vegitation phase
 hold off;
 
 figure(3);title('Ground and Vegitation angle in degrees');
 plot(n_snr,g_mag,'bo'); %Estimated ground angle
 hold on;
-plot(n_snr,ones(Averaged_samples,1)*g_weight,'b.'); %actual Ground Phase
+plot(n_snr,ones(Noise_samples,1)*g_weight,'b.'); %actual Ground Phase
 plot(n_snr,v_mag,'ro'); %Estimated Vegitation angle
-plot(n_snr,ones(Averaged_samples,1)*v_weight,'r.'); %actual Vegitation phase
+plot(n_snr,ones(Noise_samples,1)*v_weight,'r.'); %actual Vegitation phase
+xlabel('SNR dB');ylabel('error in degrees')
 hold off;
