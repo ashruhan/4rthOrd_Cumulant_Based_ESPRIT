@@ -11,16 +11,17 @@ Pol_vegitation = [1;0;1]; Pol_Cum_vegitation = [0;1;0]; %vegitation
 ground_offset = pi/3; % ground interferomitry offset
 vegitation_offset = -pi/3;    % veg interferomitry offset
 
-Window = 100;    %size of window
-Averaged_samples = 50;
+avg_loop_size = 100;
+Window = 100;    %size of Ensamble Average Window
+Noise_samples = 50;
 
-est_ground_angle=zeros(Averaged_samples,1); est_vegitation_angle=zeros(Averaged_samples,1);
-g_mag = zeros(Averaged_samples,1); v_mag = zeros(Averaged_samples,1);
+est_ground_angle=zeros(Noise_samples,1); est_vegitation_angle=zeros(Noise_samples,1);
+g_mag = zeros(Noise_samples,1); v_mag = zeros(Noise_samples,1);
 %% Matrix Calculations
 % Implimenting a window. Esprit and SR techniques
-for Averaged_sample = 1:Averaged_samples;
+for Averaged_sample = 1:Noise_samples;
     Noise = Averaged_sample*n_weight;
-    for i = 1:Window
+    for unusedVariable = 1:avg_loop_size
         
         g =  Pol_ground*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
         v =  Pol_vegitation*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
@@ -44,27 +45,27 @@ for Averaged_sample = 1:Averaged_samples;
         
         R1 = S1*S1';
         R2 = S1*S2';
-        
-        [u,c] = eig(pinv(R1)*R2);
+        A =  pinv(R1)*R2;        
+        [u,uv] = eig(A);
         
         sg = abs(Pol_Cum_ground'*u);
         [~,kk] = sort(sg,'descend');
-        est_ground_angle(Averaged_sample) = est_ground_angle(Averaged_sample) + 0.5*angle(c(kk(1),kk(1)))/Window;
-        g_mag(Averaged_sample) = g_mag(Averaged_sample) + abs(c(kk(1),kk(1)))/Window;
+        est_ground_angle(Averaged_sample) = est_ground_angle(Averaged_sample) + 0.5*angle(uv(kk(1),kk(1)))/avg_loop_size;
+        g_mag(Averaged_sample) = g_mag(Averaged_sample) + abs(uv(kk(1),kk(1)))/avg_loop_size;
         
         sv = abs(Pol_Cum_vegitation'*u);
         [~,kk] = sort(sv,'descend');
-        est_vegitation_angle(Averaged_sample) = est_vegitation_angle(Averaged_sample) + 0.5*angle(c(kk(1),kk(1)))/Window;
-        v_mag(Averaged_sample) = v_mag(Averaged_sample) + abs(c(kk(1),kk(1)))/Window;
+        est_vegitation_angle(Averaged_sample) = est_vegitation_angle(Averaged_sample) + 0.5*angle(uv(kk(1),kk(1)))/avg_loop_size;
+        v_mag(Averaged_sample) = v_mag(Averaged_sample) + abs(uv(kk(1),kk(1)))/avg_loop_size;
         
     end
 end
-temp = 1:Averaged_samples;
+temp = 1:Noise_samples;
 n_snr = 10*log10(1./(temp*n_weight).^2)';
 %% Ploting Results
-g_error = est_ground_angle*180/pi - -1*ones(Averaged_samples,1)*ground_offset*180/pi;
-v_error = est_vegitation_angle*180/pi - -1*ones(Averaged_samples,1)*vegitation_offset*180/pi;
-figure(6)
+g_error = est_ground_angle*180/pi - -1*ones(Noise_samples,1)*ground_offset*180/pi;
+v_error = est_vegitation_angle*180/pi - -1*ones(Noise_samples,1)*vegitation_offset*180/pi;
+figure(4)
 hold on;
 plot(n_snr,g_error,'b')
 plot(n_snr,v_error,'r')
@@ -73,15 +74,15 @@ hold off;
 figure(5);title('Ground and Vegitation angle in degrees');
 plot(n_snr,est_ground_angle*180/pi,'bo'); %Estimated ground angle
 hold on;
-plot(n_snr,-1*ones(Averaged_samples,1)*ground_offset*180/pi,'b.'); %actual Ground Phase
+plot(n_snr,-1*ones(Noise_samples,1)*ground_offset*180/pi,'b.'); %actual Ground Phase
 plot(n_snr,est_vegitation_angle*180/pi,'ro'); %Estimated Vegitation angle
-plot(n_snr,-1*ones(Averaged_samples,1)*vegitation_offset*180/pi,'r.'); %actual Vegitation phase
+plot(n_snr,-1*ones(Noise_samples,1)*vegitation_offset*180/pi,'r.'); %actual Vegitation phase
 hold off;
 
-figure(4);title('Ground and Vegitation angle in degrees');
+figure(6);title('Ground and Vegitation angle in degrees');
 plot(n_snr,g_mag,'bo'); %Estimated ground angle
 hold on;
-plot(n_snr,ones(Averaged_samples,1)*g_weight,'b.'); %actual Ground Phase
+plot(n_snr,ones(Noise_samples,1)*g_weight,'b.'); %actual Ground Phase
 plot(n_snr,v_mag,'ro'); %Estimated Vegitation angle
-plot(n_snr,ones(Averaged_samples,1)*v_weight,'r.'); %actual Vegitation phase
+plot(n_snr,ones(Noise_samples,1)*v_weight,'r.'); %actual Vegitation phase
 hold off;
