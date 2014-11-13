@@ -12,25 +12,26 @@ Pol_vegitation = [1;0;1]; %Multivariant Vegitation
 ground_offset = pi/4; % Ground Interferomitry offset
 vegitation_offset = pi/3;    % Vegitation Interferomitry offset
 
-avg_loop_size = 100;
-Window = 100;    %size of Ensamble Average Window
-Noise_samples = 50;
+Averaging_loop_size = 100;
+Signal_samples = 20;    %size of Ensamble Average Window
+
+Noise_samples = 20;
 g_mag = zeros(Noise_samples,1); v_mag = zeros(Noise_samples,1);
 est_ground_angle = zeros(Noise_samples,1); est_vegitation_angle = zeros(Noise_samples,1);
 %% Matrix Calculations
 % Implimenting a window. Esprit and SR techniques
 for Averaged_sample = 1:Noise_samples;
     Noise = Averaged_sample*n_weight;
-    for unusedVariable = 1:avg_loop_size;
+    for unusedVariable = 1:Averaging_loop_size;
         
-        g =  Pol_ground*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
-        v =  Pol_vegitation*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
+        g =  Pol_ground*(sqrt(-2*log(1-rand(1,Signal_samples))).*exp(1i*2*pi*rand(1,Signal_samples)));
+        v =  Pol_vegitation*(sqrt(-2*log(1-rand(1,Signal_samples))).*exp(1i*2*pi*rand(1,Signal_samples)));
         
         signal_1 = g_weight*g + v_weight*v;
         signal_2 = g_weight*exp(1i*ground_offset)*g + g_weight*exp(1i*vegitation_offset)*v;
         
-        AddedNoise_1 = Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
-        AddedNoise_2 = Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
+        AddedNoise_1 = Noise*sqrt(-2*log(1-rand(3,Signal_samples))).*exp(1i*2*pi*rand(3,Signal_samples));
+        AddedNoise_2 = Noise*sqrt(-2*log(1-rand(3,Signal_samples))).*exp(1i*2*pi*rand(3,Signal_samples));
 
         signal_1_Noise = signal_1 + AddedNoise_1;
         signal_2_Noise = signal_2 + AddedNoise_2;
@@ -44,14 +45,14 @@ for Averaged_sample = 1:Noise_samples;
         sg = abs(Pol_ground'*u);
         [~,kk] = sort(sg,'descend');
         
-        est_ground_angle(Averaged_sample) = est_ground_angle(Averaged_sample) + angle(c(kk(1),kk(1)))/avg_loop_size;
-        g_mag(Averaged_sample) = g_mag(Averaged_sample) + abs(c(kk(1),kk(1)))/avg_loop_size;
+        est_ground_angle(Averaged_sample) = est_ground_angle(Averaged_sample) + angle(c(kk(1),kk(1)))/Averaging_loop_size;
+        g_mag(Averaged_sample) = g_mag(Averaged_sample) + abs(c(kk(1),kk(1)))/Averaging_loop_size;
         
         sv = abs(Pol_vegitation'*u);
         [~,kk] = sort(sv,'descend');
         
-        est_vegitation_angle(Averaged_sample) = est_vegitation_angle(Averaged_sample) + angle(c(kk(1),kk(1)))/avg_loop_size;
-        v_mag(Averaged_sample) = v_mag(Averaged_sample) + abs(c(kk(1),kk(1)))/avg_loop_size;
+        est_vegitation_angle(Averaged_sample) = est_vegitation_angle(Averaged_sample) + angle(c(kk(1),kk(1)))/Averaging_loop_size;
+        v_mag(Averaged_sample) = v_mag(Averaged_sample) + abs(c(kk(1),kk(1)))/Averaging_loop_size;
         
     end
 end
