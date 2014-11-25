@@ -3,7 +3,7 @@ clc;clear all;
 %% Initializations
 g_weight = 1; %ground weighting factor
 v_weight = 1;   %veg weighting factor
-n_weight = 1*10^(-3/2);% Added Noise to the System
+n_weight = 1*10^(-1);% Added Noise to the System
 
 Pol_ground = [1;1;0]; %ground
 Pol_vegitation = [1;0;1];%vegitation
@@ -11,14 +11,15 @@ Pol_vegitation = [1;0;1];%vegitation
 ground_offset = pi/4; % ground interferomitry offset
 vegitation_offset = pi/3;    % veg interferomitry offset
 
-Averaging_loop_size = 100;
-Signal_samples = 20;    %size of Ensamble Average Window
+Averaging_loop_size = 50;
+Signal_samples = 100;    %size of Ensamble Average Window
 
 Noise_samples = 20;
 est_ground_angle=zeros(Noise_samples,1); est_vegitation_angle=zeros(Noise_samples,1);
 g_mag = zeros(Noise_samples,1); v_mag = zeros(Noise_samples,1);
 %% Matrix Calculations
 % Implimenting a window. Esprit and SR techniques
+
 for Averaged_sample = 1:Noise_samples;
     Noise = Averaged_sample*n_weight;
     for unusedVariable = 1:Averaging_loop_size
@@ -49,11 +50,11 @@ for Averaged_sample = 1:Noise_samples;
         A =  pinv(R1)*R2;
         [u,uv] = eig(A);
         
-        [~,kk]=sort(abs(angle(diag(uv))- ground_offset),'ascend');
-        est_ground_angle(Averaged_sample) = est_ground_angle(Averaged_sample) + angle(uv(kk(1),kk(1)))/Averaging_loop_size;
-        g_mag(Averaged_sample) = g_mag(Averaged_sample) + abs(uv(kk(1),kk(1)))/Averaging_loop_size;
+        [t,kkg]=sort(abs(angle(diag(uv))- ground_offset),'ascend');
+        est_ground_angle(Averaged_sample) = est_ground_angle(Averaged_sample) + angle(uv(kkg(1),kkg(1)))/Averaging_loop_size;
+        g_mag(Averaged_sample) = g_mag(Averaged_sample) + abs(uv(kkg(1),kkg(1)))/Averaging_loop_size;
         
-        [~,kk]=sort(abs(angle(diag(uv))- vegitation_offset),'ascend');
+        [tt,kk]=sort(abs(angle(diag(uv))- vegitation_offset),'ascend');
         est_vegitation_angle(Averaged_sample) = est_vegitation_angle(Averaged_sample) + angle(uv(kk(1),kk(1)))/Averaging_loop_size;
         v_mag(Averaged_sample) = v_mag(Averaged_sample) + abs(uv(kk(1),kk(1)))/Averaging_loop_size;
         

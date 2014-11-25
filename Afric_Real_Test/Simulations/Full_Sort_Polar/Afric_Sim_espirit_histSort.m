@@ -1,4 +1,4 @@
-%% Afric_Sim_test_espirit
+%% Afric_Sim_espirit_histSort
 clc;clear all;
 %% Initializations
 % Setting up the enviornment
@@ -12,7 +12,7 @@ Pol_vegitation = [1;0;1]; %Multivariant Vegitation
 ground_offset = pi/4; % Ground Interferomitry offset
 vegitation_offset = pi/3;    % Vegitation Interferomitry offset
 
-Averaging_loop_size = 1000;
+Averaging_loop_size = 100;
 Signal_samples = 100;    %size of Ensamble Average Window
 
 Noise_samples = 50;

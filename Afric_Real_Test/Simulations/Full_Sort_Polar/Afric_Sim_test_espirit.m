@@ -4,7 +4,7 @@ clc;clear all;
 % Setting up the enviornment
 g_weight = 1; %ground weighting factor
 v_weight = 1;   %veg weighting factor
-n_weight = 1*10^(-3/2);% Added Noise to the System
+n_weight = 1*10^(-2);% Added Noise to the System
 
 Pol_ground = [1;1;0]; %Multivatiant Ground
 Pol_vegitation = [1;0;1]; %Multivariant Vegitation
@@ -12,10 +12,10 @@ Pol_vegitation = [1;0;1]; %Multivariant Vegitation
 ground_offset = pi/4; % Ground Interferomitry offset
 vegitation_offset = pi/3;    % Vegitation Interferomitry offset
 
-Averaging_loop_size = 100;
-Signal_samples = 20;    %size of Ensamble Average Window
+Averaging_loop_size = 50;
+Signal_samples = 100;    %size of Ensamble Average Window
 
-Noise_samples = 20;
+Noise_samples = 30;
 g_mag = zeros(Noise_samples,1); v_mag = zeros(Noise_samples,1);
 est_ground_angle = zeros(Noise_samples,1); est_vegitation_angle = zeros(Noise_samples,1);
 %% Matrix Calculations
@@ -39,7 +39,7 @@ for Averaged_sample = 1:Noise_samples;
         R1 = signal_1_Noise*signal_1_Noise';
         R2 = signal_1_Noise*signal_2_Noise';
         
-        A=pinv(R1)*R2;
+        A = pinv(R1)*R2;
         [u,c] = eig(A);
         
         sg = abs(Pol_ground'*u);
