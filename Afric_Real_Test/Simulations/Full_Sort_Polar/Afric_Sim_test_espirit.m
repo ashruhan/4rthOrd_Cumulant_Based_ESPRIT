@@ -4,7 +4,7 @@ clc;clear all;
 % Setting up the enviornment
 g_weight = 1; %ground weighting factor
 v_weight = 1;   %veg weighting factor
-n_weight = 1*10^(-2);% Added Noise to the System
+n_weight = 1*10^(-3/2);% Added Noise to the System
 
 Pol_ground = [1;1;0]; %Multivatiant Ground
 Pol_vegitation = [1;0;1]; %Multivariant Vegitation
@@ -15,8 +15,7 @@ vegitation_offset = pi/3;    % Vegitation Interferomitry offset
 Averaging_loop_size = 50;
 Signal_samples = 100;    %size of Ensamble Average Window
 
-Noise_samples = 30;
-g_mag = zeros(Noise_samples,1); v_mag = zeros(Noise_samples,1);
+Noise_samples = 50;
 est_ground_angle = zeros(Noise_samples,1); est_vegitation_angle = zeros(Noise_samples,1);
 %% Matrix Calculations
 % Implimenting a window. Esprit and SR techniques
@@ -33,26 +32,22 @@ for Averaged_sample = 1:Noise_samples;
         AddedNoise_1 = Noise*sqrt(-2*log(1-rand(3,Signal_samples))).*exp(1i*2*pi*rand(3,Signal_samples));
         AddedNoise_2 = Noise*sqrt(-2*log(1-rand(3,Signal_samples))).*exp(1i*2*pi*rand(3,Signal_samples));
 
-        signal_1_Noise = signal_1 + AddedNoise_1;
-        signal_2_Noise = signal_2 + AddedNoise_2;
+        S1 = signal_1 + AddedNoise_1;
+        S2 = signal_2 + AddedNoise_2;
         
-        R1 = signal_1_Noise*signal_1_Noise';
-        R2 = signal_1_Noise*signal_2_Noise';
+        R1 = S1*S1';
+        R2 = S1*S2';
         
         A = pinv(R1)*R2;
         [u,c] = eig(A);
         
         sg = abs(Pol_ground'*u);
         [~,kk] = sort(sg,'descend');
-        
         est_ground_angle(Averaged_sample) = est_ground_angle(Averaged_sample) + angle(c(kk(1),kk(1)))/Averaging_loop_size;
-        g_mag(Averaged_sample) = g_mag(Averaged_sample) + abs(c(kk(1),kk(1)))/Averaging_loop_size;
         
         sv = abs(Pol_vegitation'*u);
         [~,kk] = sort(sv,'descend');
-        
         est_vegitation_angle(Averaged_sample) = est_vegitation_angle(Averaged_sample) + angle(c(kk(1),kk(1)))/Averaging_loop_size;
-        v_mag(Averaged_sample) = v_mag(Averaged_sample) + abs(c(kk(1),kk(1)))/Averaging_loop_size;
         
     end
 end
@@ -75,12 +70,3 @@ plot(n_snr,-1*ones(Noise_samples,1)*ground_offset*180/pi,'b.'); %actual Ground P
 plot(n_snr,est_vegitation_angle*180/pi,'ro'); %Estimated Vegitation angle
 plot(n_snr,-1*ones(Noise_samples,1)*vegitation_offset*180/pi,'r.'); %actual Vegitation phase
 hold off;
-% 
-% figure(3);title('Ground and Vegitation angle in degrees');
-% plot(n_snr,g_mag,'bo'); %Estimated ground angle
-% hold on;
-% plot(n_snr,ones(Noise_samples,1)*g_weight,'b.'); %actual Ground Phase
-% plot(n_snr,v_mag,'ro'); %Estimated Vegitation angle
-% plot(n_snr,ones(Noise_samples,1)*v_weight,'r.'); %actual Vegitation phase
-% xlabel('SNR dB');ylabel('error in degrees')
-% hold off;
