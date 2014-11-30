@@ -12,12 +12,12 @@ Averaging_loop_size = 50;
 Signal_samples = 100;    %size of Ensamble Average Window
 Noise_samples = 50;
 
-est_ground_angle=zeros(Noise_samples,1); 
+est_ground_angle=zeros(Noise_samples,1);
 est_vegitation_angle=zeros(Noise_samples,1);
 
 %% Setting offset in degrees then converting to radians
 % It help me visualize when entering the degrees instead of radians
-ground_offset_degrees = 59; ground_offset_radians = ground_offset_degrees*pi/180; % Ground Interferomitry offset
+ground_offset_degrees = 45; ground_offset_radians = ground_offset_degrees*pi/180; % Ground Interferomitry offset
 vegitation_offset_degrees = 60; vegitation_offset_radians = vegitation_offset_degrees*pi/180; % Vegitation Interferomitry offset
 
 %% Matrix Calculations
@@ -34,7 +34,7 @@ for Averaged_sample = 1:Noise_samples;
         
         AddedNoise_1 = Noise*sqrt(-2*log(1-rand(3,Signal_samples))).*exp(1i*2*pi*rand(3,Signal_samples));
         AddedNoise_2 = Noise*sqrt(-2*log(1-rand(3,Signal_samples))).*exp(1i*2*pi*rand(3,Signal_samples));
-
+        
         signal_1_Noise = signal_1 + AddedNoise_1;
         signal_2_Noise = signal_2 + AddedNoise_2;
         
@@ -48,9 +48,10 @@ for Averaged_sample = 1:Noise_samples;
         
         R1 = S1*S1';
         R2 = S1*S2';
-        A =  pinv(R1)*R2;        
+        A =  pinv(R1)*R2;
         [u,uv] = eig(A);
-
+        
+        temp = 0.5*angle(diag(uv));
         sort_ground_degrees = 0.5*abs(angle(diag(uv)))*180/pi;
         
         [~,kk]=sort(abs(sort_ground_degrees - ground_offset_degrees),'ascend');
