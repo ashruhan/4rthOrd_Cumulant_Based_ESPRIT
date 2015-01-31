@@ -67,23 +67,23 @@ for Averaged_sample = 1:Averaged_samples;
 end
 %% Plotting Results
 
-figure(1);
-title('Ground and Vegitation Interferometric Phases');
-xlabel('SNR dB');ylabel('Int Phase (Degrees)');
-hold on;
-plot(SNR,ground_phase_est*180/pi,'ro');
-plot(SNR,-1*ones(Averaged_samples,1)*ground_offset*180/pi,'r+'); %actual Ground Phase
-plot(SNR,vegitation_phase_est*180/pi,'go');
-plot(SNR,-1*ones(Averaged_samples,1)*vegitation_offset*180/pi,'g+'); %actual Vegitation phase
-axis([-10 20 -70 -10]);
-legend('Ground Estimated','Ground Actual','Vegitation Estimated','Vegitaion Actual','Location','northeast')
-hold off
+% figure(1);
+% title('Ground and Vegitation Interferometric Phases');
+% xlabel('SNR dB');ylabel('Int Phase (Degrees)');
+% hold on;
+% plot(SNR,ground_phase_est*180/pi,'ro');
+% plot(SNR,-1*ones(Averaged_samples,1)*ground_offset*180/pi,'r+'); %actual Ground Phase
+% plot(SNR,vegitation_phase_est*180/pi,'go');
+% plot(SNR,-1*ones(Averaged_samples,1)*vegitation_offset*180/pi,'g+'); %actual Vegitation phase
+% axis([-10 20 -70 -10]);
+% legend('Ground Estimated','Ground Actual','Vegitation Estimated','Vegitaion Actual','Location','northeast')
+% hold off
 
-figure(2)
-title('Ground Vegitation Coherance');
-xlabel('SNR (dB)');ylabel('Maginitude')
-hold on;
-plot(SNR,ground_mag_est,'ro');
-plot(SNR,vegitation_mag_est,'bo');
-legend('Ground Coherance','Vetitaion Coherance','Location','east');
-hold off;
+% figure(2)
+% title('Ground Vegitation Coherance');
+% xlabel('SNR (dB)');ylabel('Maginitude')
+% hold on;
+% plot(SNR,ground_mag_est,'ro');
+% plot(SNR,vegitation_mag_est,'bo');
+% legend('Ground Coherance','Vetitaion Coherance','Location','east');
+% hold off;

@@ -1,5 +1,5 @@
 %% Afric_Sim_test_espirit
-clc;clear all;
+clc;clear;
 %% Initializations
 alpha = 1; %ground weighting factor
 beta = 1;   %veg weighting factor
