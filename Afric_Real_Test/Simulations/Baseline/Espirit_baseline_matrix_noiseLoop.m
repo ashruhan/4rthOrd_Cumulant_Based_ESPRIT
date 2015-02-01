@@ -8,7 +8,7 @@ signal_one_angle = 10*pi/180;
 % signal_two_angle = 2*pi/180; 
 
 delx = 0.5; % Delta x of baseline
-baseline = 4*delx; %Physical baseline of two sample arrays
+baseline = delx; %Physical baseline of two sample arrays
 
 signal_one_phase = sin(signal_one_angle)*2*pi*baseline; %Used in the sorting routine
 % signal_two_phase = sin(signal_two_angle)*2*pi*baseline; %Used in the sorting routine
@@ -42,9 +42,9 @@ for Averaged_sample = 1:Averaged_samples;
         %% Setting up Baselines
         % Remember to change the Initial Variable delx if Baseline changes
         
-                S1 = [X(1,:); X(2,:)]; S2 = [X(5,:);X(6,:)]; %Baseline = 4delx
+%                 S1 = [X(1,:); X(2,:)]; S2 = [X(5,:);X(6,:)]; %Baseline = 4delx
         %         S1 = [X(2,:);X(3,:)]; S2 = [X(4,:);X(5,:)]; %Baseline = 2delx
-%         S1 = [X(3,:);X(4,:)]; S2 = [X(4,:);X(5,:)]; %Baseline = delx
+        S1 = [X(3,:);X(4,:)]; S2 = [X(4,:);X(5,:)]; %Baseline = delx
         %         S1 = [X(2,:);X(3,:);X(4,:)]; S2 = [X(3,:);X(4,:);X(5,:)]; %Baseline = delx
         %         S1 = [X(1,:);X(2,:);X(3,:);X(4,:)]; S2 = [X(2,:);X(3,:);X(4,:);X(5,:)]; %Baseline = delx
         
@@ -74,7 +74,7 @@ hold on;
 plot(SNR,ones(1,Averaged_samples)*signal_one_angle*180/pi,'b+'); %actual Ground Phase
 % plot(SNR,est_sig_two_angle*180/pi,'ro'); %Estimated Vegitation angle
 % plot(SNR,ones(1,Noise_samples)*signal_two_angle*180/pi,'r.'); %actual Vegitation phase
-title('Direction of Arrival Resolution 4 Delx');
+title('Direction of Arrival Resolution 1 Delx');
 xlabel('SNR dB');ylabel('Angle from referance plane (Degrees)');
 legend('Signal One Estimated','Signal One Actual','Location','northeast')
 
@@ -82,7 +82,7 @@ axis([-10 20 0 20]);
 hold off;
 
 figure(2)
-title('DOA Reliability 4 Delx');
+title('DOA Coherance 1 Delx');
 xlabel('SNR (dB)');ylabel('Maginitude')
 hold on;
 plot(SNR,est_sig_one_mag,'ro');
