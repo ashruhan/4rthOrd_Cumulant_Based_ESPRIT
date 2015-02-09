@@ -9,7 +9,7 @@ Pol_ground = [1;-1;0]/sqrt(2);
 Pol_vegitation = [1;1;1]/sqrt(3); 
 
 ground_offset = 30*pi/180; % ground interferomitry offset
-vegitation_offset =  35*pi/180;    % veg interferomitry offset
+vegitation_offset =  31*pi/180;    % veg interferomitry offset
 samples = 10;
 Window = 200;    %size of window
 Averaged_samples = 30;
@@ -71,8 +71,8 @@ figure(1);
 title('Ground and Vegitation Interferometric Phases');
 xlabel('SNR dB');ylabel('Int Phase (Degrees)');
 hold on;
-plot(SNR,ground_phase_est*180/pi,'ro');
-plot(SNR,-1*ones(Averaged_samples,1)*ground_offset*180/pi,'r+'); %actual Ground Phase
+plot(SNR,ground_phase_est*180/pi,'bo');
+plot(SNR,-1*ones(Averaged_samples,1)*ground_offset*180/pi,'b+'); %actual Ground Phase
 plot(SNR,vegitation_phase_est*180/pi,'go');
 plot(SNR,-1*ones(Averaged_samples,1)*vegitation_offset*180/pi,'g+'); %actual Vegitation phase
 axis([-10 20 -70 -10]);
@@ -83,7 +83,7 @@ figure(2)
 title('Ground Vegitation Coherance');
 xlabel('SNR (dB)');ylabel('Maginitude')
 hold on;
-plot(SNR,ground_mag_est,'ro');
-plot(SNR,vegitation_mag_est,'bo');
+plot(SNR,ground_mag_est,'bo');
+plot(SNR,vegitation_mag_est,'go');
 legend('Ground Coherance','Vetitaion Coherance','Location','east');
 hold off;

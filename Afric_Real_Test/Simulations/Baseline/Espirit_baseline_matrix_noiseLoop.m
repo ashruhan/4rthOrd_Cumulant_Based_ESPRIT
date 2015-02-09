@@ -8,7 +8,7 @@ signal_one_angle = 10*pi/180;
 % signal_two_angle = 2*pi/180; 
 
 delx = 0.5; % Delta x of baseline
-baseline = delx; %Physical baseline of two sample arrays
+baseline = 4*delx; %Physical baseline of two sample arrays
 
 signal_one_phase = sin(signal_one_angle)*2*pi*baseline; %Used in the sorting routine
 % signal_two_phase = sin(signal_two_angle)*2*pi*baseline; %Used in the sorting routine
@@ -82,10 +82,10 @@ axis([-10 20 0 20]);
 hold off;
 
 figure(2)
-title('DOA Coherance 1 Delx');
+title('DOA Coherance 4 Delx');
 xlabel('SNR (dB)');ylabel('Maginitude')
 hold on;
 plot(SNR,est_sig_one_mag,'ro');
-legend('Ground Coherance','Location','east');
+legend('Signal Coherance','Location','east');
 axis([-10 20 0 1]);
 hold off;
