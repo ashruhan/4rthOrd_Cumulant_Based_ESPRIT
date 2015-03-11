@@ -1,5 +1,5 @@
 %% Afric_Sim_test_espirit
-clc;clear all;
+clc;clear;
 %% Initializations
 % Setting up the enviornment
 g_weight = 1; %ground weighting factor

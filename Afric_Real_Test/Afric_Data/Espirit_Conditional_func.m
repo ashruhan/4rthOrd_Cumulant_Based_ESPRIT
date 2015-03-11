@@ -15,7 +15,7 @@ for row = 1:ylength;
         
         if(row<r+1)&&(col<c+1)     % condition 1
             [s1,s2] = Average_Condition1(R,C,hh,vv,xx);
-            d
+            
         elseif(row<r+1)&&(c+1<col)&&(col<xlength-c)    % condition 2
             [s1,s2] = Average_Condition2(R,C,hh,vv,xx);
             

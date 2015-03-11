@@ -16,7 +16,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% REPLACE WITH YOUR IMAGES
-load 'IM.mat'                               %Load complex image
+% load 'IM.mat'                               %Load complex image
+function [im_unwrapped,im_mag] = QualityGuidedUnwrap2D(IM)
 im_mask=ones(size(IM));                     %Mask (if applicable)
 %%
 
@@ -46,6 +47,6 @@ if im_mask(rowref, colref-1, 1)==1 adjoin(rowref, colref-1, 1)=1; end
 if im_mask(rowref, colref+1, 1)==1 adjoin(rowref, colref+1, 1)=1; end
 im_unwrapped=GuidedFloodFill(im_phase, im_unwrapped, unwrapped_binary, im_phase_quality, adjoin, im_mask);    %Unwrap
 
-figure; imagesc(im_mag), colormap(gray), axis square, axis off; title('Magnitude image'); 
-figure; imagesc(im_phase), colormap(gray), axis square, axis off; title('Wrapped phase'); 
-figure; imagesc(im_unwrapped), colormap(gray), axis square, axis off; title('Unwrapped phase'); 
+% figure; imagesc(im_mag), colormap(gray), axis square, axis off; title('Magnitude image'); 
+% figure; imagesc(im_phase), colormap(gray), axis square, axis off; title('Wrapped phase'); 
+% figure; imagesc(im_unwrapped), colormap(gray), axis square, axis off; title('Unwrapped phase'); 
