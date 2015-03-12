@@ -1,5 +1,4 @@
-%% Afric_Sim_test_espirit
-%% Afric_Sim_test_espirit
+%% Error Calculations Second and Fourth
 clc;clear;
 %% Initializations
 alpha = 1;
@@ -11,9 +10,9 @@ pol_cum_signal_one = [1;1;0;-1;0;0]/2; %ground
 % pol_cum_signal_one = [1;1;1;1;1;1]/3;
 
 signal_one_offset = 30*pi/180;
-samples = 10;
+samples = 500;
 Window = 100;    %size of window
-Averaged_samples = 10000;
+Averaged_samples = 100;
 
 signal_one_phase_est_second = zeros(1,Averaged_samples);
 signal_one_mag_est_second = zeros(1,Averaged_samples);
@@ -24,7 +23,7 @@ signal_one_mag_est_fourth = zeros(1,Averaged_samples);
 SNR = zeros(1,Averaged_samples);
 %% Matrix Calculations
 % Implimenting a window. Esprit and SR techniques
-Noise = linspace(.1,10,Averaged_samples);
+Noise = linspace(0.1,10,Averaged_samples);
 for Averaged_sample = 1:Averaged_samples;
     
     SNR(Averaged_sample) = 10*log10(1/(Noise(Averaged_sample))^2);
@@ -55,8 +54,8 @@ for Averaged_sample = 1:Averaged_samples;
         
         sort_pol_2 = abs(pol_signal_one'*u_2);
         [~,kk_2] = sort(sort_pol_2,'descend');
-        signal_one_phase_est_second(Averaged_sample) = signal_one_phase_est_second(Averaged_sample) + angle(c_2(kk_2(1),kk_2(1)))/samples;
-        signal_one_mag_est_second(Averaged_sample) = signal_one_mag_est_second(Averaged_sample) + abs(c_2(kk_2(1),kk_2(1)))/samples;
+        signal_one_phase_est_second(Averaged_sample) = signal_one_phase_est_second(Averaged_sample) + ((angle(c_2(kk_2(1),kk_2(1)))+signal_one_offset)^2)/samples;
+        signal_one_mag_est_second(Averaged_sample) = signal_one_mag_est_second(Averaged_sample) + (abs(c_2(kk_2(1),kk_2(1))))/samples;
         
         %% Fourth Order Statistics
         p1_4 = [s1_Noise(1,:).*s1_Noise(1,:)
@@ -82,35 +81,29 @@ for Averaged_sample = 1:Averaged_samples;
         
         sort_pol_4 = abs(pol_cum_signal_one'*u_4);
         [~,kk_4] = sort(sort_pol_4,'descend');
-        signal_one_phase_est_fourth(Averaged_sample) = signal_one_phase_est_fourth(Averaged_sample) + 0.5*angle(c_4(kk_4(1),kk_4(1)))/samples;
-        signal_one_mag_est_fourth(Averaged_sample) = signal_one_mag_est_fourth(Averaged_sample) + abs(c_4(kk_4(1),kk_4(1)))/samples;
+        signal_one_phase_est_fourth(Averaged_sample) = signal_one_phase_est_fourth(Averaged_sample) + ((0.5*angle(c_4(kk_4(1),kk_4(1)))+signal_one_offset)^2)/samples;
+        signal_one_mag_est_fourth(Averaged_sample) = signal_one_mag_est_fourth(Averaged_sample) + (abs(c_4(kk_4(1),kk_4(1))))/samples;
         
     end
 end
+signal_one_phase_est_second_mnsqrd = sqrt(signal_one_phase_est_second)*180/pi;
+signal_one_mag_est_second_mnsqrd = sqrt(signal_one_mag_est_second)*180/pi;
+signal_one_phase_est_fourth_mnsqrd = sqrt(signal_one_phase_est_fourth)*180/pi;
+signal_one_mag_est_fourth_mnsqrd = sqrt(signal_one_mag_est_fourth)*180/pi;
 %% Plotting Results
-signal_one_error_second = (signal_one_phase_est_second*180/pi - -1*ones(1,Averaged_samples)*signal_one_offset*180/pi);
-signal_one_error_fourth = (signal_one_phase_est_fourth*180/pi - -1*ones(1,Averaged_samples)*signal_one_offset*180/pi);
 
-figure(1);title('Signal Error (Degrees)')
-plot(SNR,signal_one_error_second,'b')
+figure(1);title('Mean Square Error (degrees)')
+plot(SNR,signal_one_phase_est_second_mnsqrd,'b');
 hold on;
-plot(SNR,signal_one_error_fourth,'g')
+plot(SNR,signal_one_phase_est_fourth_mnsqrd,'g');
 hold off;
-legend('2nd Order Error','4rth Order Error','Location','southeast');
+xlabel('SNR');ylabel('Mean Square Error (degrees)')
+legend('2nd Order Error','4rth Order Error','Location','northeast');
 
-axis([-20 20 -70 120]);
-
-figure(2)
-plot(SNR,-1*signal_one_phase_est_second*180/pi,'b');
+figure(2);title('Mean Square Error (dB)')
+plot(SNR,log10(signal_one_phase_est_second_mnsqrd),'b');
 hold on;
-plot(SNR,-1*signal_one_phase_est_fourth*180/pi,'g');
+plot(SNR,log10(signal_one_phase_est_fourth_mnsqrd),'g');
 hold off;
-legend('2nd Order Signal','4rth Order Signal','Location','southeast');
-axis([-20 20 -100 100]);
-
-figure(3)
-plot(SNR,signal_one_mag_est_second,'b')
-hold on;
-plot(SNR,signal_one_mag_est_fourth,'g')
-hold off;
-legend('2nd Order Coherance','4rth Order Coherance','Location','southeast');
+xlabel('SNR');ylabel('Mean Square Error (dB)')
+legend('2nd Order Error','4rth Order Error','Location','northeast');
