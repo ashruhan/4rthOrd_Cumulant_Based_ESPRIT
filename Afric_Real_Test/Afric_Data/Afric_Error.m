@@ -72,7 +72,7 @@ for row = 1:ylength;
         
         [~,uv] = eig(A);
         
-        [~,kk] = sort(abs(diag(uv)),'ascend');
+        [~,kk] = sort(abs(diag(uv)),'descend');
         
         secondOrd.largest.complex(row,column) = uv(kk(1),kk(1));
         secondOrd.medium.complex(row,column) = uv(kk(2),kk(2));
@@ -101,8 +101,8 @@ for row = 1:ylength;
         
         [~,uv] = eig(A);
         
-        [~,kk] = sort(abs(diag(uv)),'ascend');
-        
+        [~,kk] = sort(abs(diag(uv)),'descend');
+        test = abs(diag(uv));
         fourthOrd.largest.complex(row,column) = uv(kk(1),kk(1));
         fourthOrd.medium.complex(row,column) = uv(kk(2),kk(2));
         
@@ -113,18 +113,18 @@ secondOrd.largest.phase.phase = angle(secondOrd.largest.complex);
 secondOrd.medium.phase.phase = angle(secondOrd.medium.complex);
 fourthOrd.largest.phase.phase = angle(fourthOrd.largest.complex);
 fourthOrd.medium.phase.phase = angle(fourthOrd.medium.complex);
-
 secondOrd.largest.abs.abs = abs(secondOrd.largest.complex);
 secondOrd.medium.abs.abs = abs(secondOrd.medium.complex);
 fourthOrd.largest.abs.abs = abs(fourthOrd.largest.complex);
 fourthOrd.medium.abs.abs = abs(fourthOrd.medium.complex);
 
+
 inter.h.phase.phase = angle(inter.h.complex);
 inter.v.phase.phase = angle(inter.v.complex);
 inter.x.phase.phase = angle(inter.x.complex);
-inter.h.abs.abs = abs(inter.h);
-inter.v.abs.abs = abs(inter.v);
-inter.x.abs.abs = abs(inter.x);
+inter.h.abs.abs = abs(inter.h.complex);
+inter.v.abs.abs = abs(inter.v.complex);
+inter.x.abs.abs = abs(inter.x.complex);
 %% Unwrapping Image
 % [unwrappedPhase.seven,unwrappedMag.seven] = QualityGuidedUnwrap2D( phase.seven);
 % [unwrappedPhase.eight,unwrappedMag.eight] = QualityGuidedUnwrap2D( phase.eight);
@@ -169,21 +169,80 @@ secondOrd.medium.phase.highpass = secondOrd.medium.phase.phase - filter2(fspecia
 fourthOrd.largest.phase.highpass = fourthOrd.largest.phase.phase - filter2(fspecial('gaussian', HSIZE,SIGMA),fourthOrd.largest.phase.phase);
 fourthOrd.medium.phase.highpass = fourthOrd.medium.phase.phase - filter2(fspecial('gaussian', HSIZE,SIGMA),fourthOrd.medium.phase.phase);
 
-%% Finding Errors in ESPIRIT Using Interferometry Results
-error.second.largest.h = secondOrd.largest.phase.lowpass - inter.h.phase.lowpass;
-error.second.largest.v = secondOrd.largest.phase.lowpass - inter.v.phase.lowpass;
-error.second.largest.x = secondOrd.largest.phase.lowpass - inter.x.phase.lowpass;
+%% Finding Second Order Errors in ESPIRIT Using Interferometry Results
 
-error.second.medium.h = secondOrd.medium.phase.lowpass - inter.h.phase.lowpass;
-error.second.medium.v = secondOrd.medium.phase.lowpass - inter.v.phase.lowpass;
-error.second.medium.x = secondOrd.medium.phase.lowpass - inter.x.phase.lowpass;
+error.second.largest.h.phase.lowpass = secondOrd.largest.phase.lowpass - inter.h.phase.lowpass;
+error.second.largest.v.phase.lowpass = secondOrd.largest.phase.lowpass - inter.v.phase.lowpass;
+error.second.largest.x.phase.lowpass = secondOrd.largest.phase.lowpass - inter.x.phase.lowpass;
+
+error.second.medium.h.phase.lowpass = secondOrd.medium.phase.lowpass - inter.h.phase.lowpass;
+error.second.medium.v.phase.lowpass = secondOrd.medium.phase.lowpass - inter.v.phase.lowpass;
+error.second.medium.x.phase.lowpass = secondOrd.medium.phase.lowpass - inter.x.phase.lowpass;
+
+error.second.largest.h.abs.lowpass = secondOrd.largest.abs.lowpass - inter.h.abs.lowpass;
+error.second.largest.v.abs.lowpass = secondOrd.largest.abs.lowpass - inter.v.abs.lowpass;
+error.second.largest.x.abs.lowpass = secondOrd.largest.abs.lowpass - inter.x.abs.lowpass;
+
+error.second.medium.h.abs.lowpass = secondOrd.medium.abs.lowpass - inter.h.abs.lowpass;
+error.second.medium.v.abs.lowpass = secondOrd.medium.abs.lowpass - inter.v.abs.lowpass;
+error.second.medium.x.abs.lowpass = secondOrd.medium.abs.lowpass - inter.x.abs.lowpass;
 
 
+error.second.largest.h.phase.highpass = secondOrd.largest.phase.highpass - inter.h.phase.highpass;
+error.second.largest.v.phase.highpass = secondOrd.largest.phase.highpass - inter.v.phase.highpass;
+error.second.largest.x.phase.highpass = secondOrd.largest.phase.highpass - inter.x.phase.highpass;
+
+error.second.medium.h.phase.highpass = secondOrd.medium.phase.highpass - inter.h.phase.highpass;
+error.second.medium.v.phase.highpass = secondOrd.medium.phase.highpass - inter.v.phase.highpass;
+error.second.medium.x.phase.highpass = secondOrd.medium.phase.highpass - inter.x.phase.highpass;
+
+error.second.largest.h.abs.highpass = secondOrd.largest.abs.highpass - inter.h.abs.highpass;
+error.second.largest.v.abs.highpass = secondOrd.largest.abs.highpass - inter.v.abs.highpass;
+error.second.largest.x.abs.highpass = secondOrd.largest.abs.highpass - inter.x.abs.highpass;
+
+error.second.medium.h.abs.highpass = secondOrd.medium.abs.highpass - inter.h.abs.highpass;
+error.second.medium.v.abs.highpass = secondOrd.medium.abs.highpass - inter.v.abs.highpass;
+error.second.medium.x.abs.highpass = secondOrd.medium.abs.highpass - inter.x.abs.highpass;
+
+%% Finding Fourth Order Errors in ESPIRIT Using Interferometry Results
+
+error.fourth.largest.h.phase.lowpass = fourthOrd.largest.phase.lowpass - inter.h.phase.lowpass;
+error.fourth.largest.v.phase.lowpass = fourthOrd.largest.phase.lowpass - inter.v.phase.lowpass;
+error.fourth.largest.x.phase.lowpass = fourthOrd.largest.phase.lowpass - inter.x.phase.lowpass;
+
+error.fourth.medium.h.phase.lowpass = fourthOrd.medium.phase.lowpass - inter.h.phase.lowpass;
+error.fourth.medium.v.phase.lowpass = fourthOrd.medium.phase.lowpass - inter.v.phase.lowpass;
+error.fourth.medium.x.phase.lowpass = fourthOrd.medium.phase.lowpass - inter.x.phase.lowpass;
+
+error.fourth.largest.h.abs.lowpass = fourthOrd.largest.abs.lowpass - inter.h.abs.lowpass;
+error.fourth.largest.v.abs.lowpass = fourthOrd.largest.abs.lowpass - inter.v.abs.lowpass;
+error.fourth.largest.x.abs.lowpass = fourthOrd.largest.abs.lowpass - inter.x.abs.lowpass;
+
+error.fourth.medium.h.abs.lowpass = fourthOrd.medium.abs.lowpass - inter.h.abs.lowpass;
+error.fourth.medium.v.abs.lowpass = fourthOrd.medium.abs.lowpass - inter.v.abs.lowpass;
+error.fourth.medium.x.abs.lowpass = fourthOrd.medium.abs.lowpass - inter.x.abs.lowpass;
+
+
+error.fourth.largest.h.phase.highpass = fourthOrd.largest.phase.highpass - inter.h.phase.highpass;
+error.fourth.largest.v.phase.highpass = fourthOrd.largest.phase.highpass - inter.v.phase.highpass;
+error.fourth.largest.x.phase.highpass = fourthOrd.largest.phase.highpass - inter.x.phase.highpass;
+
+error.fourth.medium.h.phase.highpass = fourthOrd.medium.phase.highpass - inter.h.phase.highpass;
+error.fourth.medium.v.phase.highpass = fourthOrd.medium.phase.highpass - inter.v.phase.highpass;
+error.fourth.medium.x.phase.highpass = fourthOrd.medium.phase.highpass - inter.x.phase.highpass;
+
+error.fourth.largest.h.abs.highpass = fourthOrd.largest.abs.highpass - inter.h.abs.highpass;
+error.fourth.largest.v.abs.highpass = fourthOrd.largest.abs.highpass - inter.v.abs.highpass;
+error.fourth.largest.x.abs.highpass = fourthOrd.largest.abs.highpass - inter.x.abs.highpass;
+
+error.fourth.medium.h.abs.highpass = fourthOrd.medium.abs.highpass - inter.h.abs.highpass;
+error.fourth.medium.v.abs.highpass = fourthOrd.medium.abs.highpass - inter.v.abs.highpass;
+error.fourth.medium.x.abs.highpass = fourthOrd.medium.abs.highpass - inter.x.abs.highpass;
 %% Plotting Results
 
-figure(1);imshow(error.second.largest.h);colormap(parula);title('error.second.largest.h');
-figure(1);imshow(error.second.largest.v);colormap(parula);title('error.second.largest.v');
-figure(1);imshow(error.second.largest.x);colormap(parula);title('error.second.largest.x');
-figure(1);imshow(error.second.medium.h);colormap(parula);title('error.second.medium.h');
-figure(1);imshow(error.second.medium.v);colormap(parula);title('error.second.medium.v');
-figure(1);imshow(error.second.medium.x);colormap(parula);title('error.second.medium.x');
+figure(1);imshow(error.fourth.largest.h.abs.lowpass);colormap(parula);title('error.fourth.largest.h.abs.lowpass');
+figure(2);imshow(error.fourth.largest.v.abs.lowpass);colormap(parula);title('error.fourth.largest.v.abs.lowpass');
+figure(3);imshow(error.fourth.largest.x.abs.lowpass);colormap(parula);title('error.fourth.largest.x.abs.lowpass');
+figure(4);imshow(error.fourth.medium.h.abs.lowpass);colormap(parula);title('error.fourth.medium.h.abs.lowpass');
+figure(5);imshow(error.fourth.medium.v.abs.lowpass);colormap(parula);title('error.fourth.medium.v.abs.lowpass');
+figure(6);imshow(error.fourth.medium.x.abs.lowpass);colormap(parula);title('error.fourth.medium.x.abs.lowpass');

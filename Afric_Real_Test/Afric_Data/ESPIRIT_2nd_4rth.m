@@ -65,7 +65,7 @@ for row = 1:ylength;
         
         [~,uv] = eig(A);
         
-        [~,kk] = sort(abs(diag(uv)),'ascend');
+        [~,kk] = sort(abs(diag(uv)),'descend');
         
         secondOrd.largest.complex(row,column) = uv(kk(1),kk(1));
         secondOrd.medium.complex(row,column) = uv(kk(2),kk(2));

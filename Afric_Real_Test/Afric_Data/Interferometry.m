@@ -59,9 +59,9 @@ end
 phase_inter.h = angle(inter.h);
 phase_inter.v = angle(inter.v);
 phase_inter.x = angle(inter.x);
-ab_inter.h = abs(inter.h);
-ab_inter.v = abs(inter.v);
-ab_inter.x = abs(inter.x);
+abs_inter.h = abs(inter.h);
+abs_inter.v = abs(inter.v);
+abs_inter.x = abs(inter.x);
 %% Unwrapping Image
 % [unwrappedPhase.seven,unwrappedMag.seven] = QualityGuidedUnwrap2D( phase.seven);
 % [unwrappedPhase.eight,unwrappedMag.eight] = QualityGuidedUnwrap2D( phase.eight);
@@ -69,13 +69,13 @@ ab_inter.x = abs(inter.x);
 HSIZE = 10;
 SIGMA = .5;
 
-lowPass_INTER_abs.h = filter2(fspecial('gaussian', HSIZE,SIGMA),ab_inter.h);
-lowPass_INTER_abs.v = filter2(fspecial('gaussian', HSIZE,SIGMA),ab_inter.v);
-lowPass_INTER_abs.x = filter2(fspecial('gaussian', HSIZE,SIGMA),ab_inter.x);
+lowPass_INTER_abs.h = filter2(fspecial('gaussian', HSIZE,SIGMA),abs_inter.h);
+lowPass_INTER_abs.v = filter2(fspecial('gaussian', HSIZE,SIGMA),abs_inter.v);
+lowPass_INTER_abs.x = filter2(fspecial('gaussian', HSIZE,SIGMA),abs_inter.x);
 
-highPass_INTER_abs.h = ab_inter.h-filter2(fspecial('gaussian', HSIZE,SIGMA),ab_inter.h);
-highPass_INTER_abs.v = ab_inter.v-filter2(fspecial('gaussian', HSIZE,SIGMA),ab_inter.v);
-highPass_INTER_abs.x = ab_inter.x-filter2(fspecial('gaussian', HSIZE,SIGMA),ab_inter.x);
+highPass_INTER_abs.h = abs_inter.h-filter2(fspecial('gaussian', HSIZE,SIGMA),abs_inter.h);
+highPass_INTER_abs.v = abs_inter.v-filter2(fspecial('gaussian', HSIZE,SIGMA),abs_inter.v);
+highPass_INTER_abs.x = abs_inter.x-filter2(fspecial('gaussian', HSIZE,SIGMA),abs_inter.x);
 
 lowPass_phase.h = filter2(fspecial('gaussian', HSIZE,SIGMA),phase_inter.h);
 lowPass_phase.v = filter2(fspecial('gaussian', HSIZE,SIGMA),phase_inter.v);
@@ -100,21 +100,3 @@ figure(9);imshow(lowPass_phase.x);colormap(parula);title('lowPass.phase.x');
 figure(10);imshow(highPass_phase.h);colormap(parula);title('highPass.phase.h');
 figure(11);imshow(highPass_phase.v);colormap(parula);title('highPass.phase.v');
 figure(12);imshow(highPass_phase.x);colormap(parula);title('highPass.phase.x');
-
-
-
-% imtool(lowPass_abs.h);
-% imtool(lowPass_abs.v);
-% imtool(lowPass_abs.x);
-% 
-% imtool(highPass_abs.h);
-% imtool(highPass_abs.v);
-% imtool(highPass_abs.x);
-% 
-% imtool(lowPass_phase.h);
-% imtool(lowPass_phase.v);
-% imtool(lowPass_phase.x);
-% 
-% imtool(highPass_phase.h);
-% imtool(highPass_phase.v);
-% imtool(highPass_phase.x);
