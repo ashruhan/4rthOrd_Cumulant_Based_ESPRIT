@@ -1,5 +1,10 @@
-sigma = 1:9;
-V = 0:0.01:30;
+%% RAYLEIGH Published
+
+variance = 9;
+sigma = 1:variance;
+samples = 3000;
+V = linspace(0,30,samples);
+p_v = zeros(variance,samples);
 for i = 1:length(sigma)
 p_v(i,:) = (V./(2.*pi.*(sigma(i).^2))).*(exp(-(V.^2)./(2*(sigma(i).^2))));
 end

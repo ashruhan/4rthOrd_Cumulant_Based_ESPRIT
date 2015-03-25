@@ -12,7 +12,7 @@ Pol_Cum_ground = [1;1;0;-1;0;0]/2; %ground
 Pol_Cum_vegitation = [1;1;1;1;1;1]/3; %vegitation
 
 ground_offset = 30*pi/180; % ground interferomitry offset
-vegitation_offset =  33*pi/180;    % veg interferomitry offset
+vegitation_offset =  60*pi/180;    % veg interferomitry offset
 samples = 10;
 Window = 200;    %size of window
 Averaged_samples = 30;
@@ -56,12 +56,24 @@ for Averaged_sample = 1:Averaged_samples;
             s2_Noise(1,:).*s2_Noise(3,:)
             s2_Noise(2,:).*s2_Noise(3,:)];
         
+
+%         p1 = [s1_Noise(1,:).*s1_Noise(2,:)
+%             s1_Noise(1,:).*s1_Noise(3,:)
+%             s1_Noise(2,:).*s1_Noise(3,:)];
+%         
+%         p2 = [s2_Noise(1,:).*s2_Noise(2,:)
+%             s2_Noise(1,:).*s2_Noise(3,:)
+%             s2_Noise(2,:).*s2_Noise(3,:)];
+
         R1 = p1*p1'/Window;
         R2 = p1*p2'/Window;
         
         A=pinv(R1)*R2;
         
         [u,c] = eig(A);
+        
+        a = abs(c)
+        p = angle(c)
         
         s1 = abs(Pol_Cum_ground'*u);
         [~,kk]=sort(s1,'descend');
@@ -77,7 +89,7 @@ for Averaged_sample = 1:Averaged_samples;
 end
 %% Plotting Results
 
-figure(1);
+figure(2);
 title('Ground and Vegitation Interferometric Phases');
 xlabel('SNR dB');ylabel('Int Phase (Degrees)');
 hold on;
@@ -89,11 +101,11 @@ axis([-10 20 -70 -10]);
 legend('Ground Estimated','Ground Actual','Vegitation Estimated','Vegitaion Actual','Location','northeast')
 hold off
 
-figure(2)
-title('Ground Vegitation Coherance');
-xlabel('SNR (dB)');ylabel('Maginitude')
-hold on;
-plot(SNR,ground_mag_est,'bo');
-plot(SNR,vegitation_mag_est,'go');
-legend('Ground Coherance','Vetitaion Coherance','Location','east');
-hold off;
+% figure(2)
+% title('Ground Vegitation Coherance');
+% xlabel('SNR (dB)');ylabel('Maginitude')
+% hold on;
+% plot(SNR,ground_mag_est,'bo');
+% plot(SNR,vegitation_mag_est,'go');
+% legend('Ground Coherance','Vetitaion Coherance','Location','east');
+% hold off;
