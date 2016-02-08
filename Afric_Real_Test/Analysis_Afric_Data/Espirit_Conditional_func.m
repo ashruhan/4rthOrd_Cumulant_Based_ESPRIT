@@ -89,7 +89,7 @@ for current_row = 1:total_rows;
         
         [~,uv] = eig(pinv(R1)*R2);
         
-        [~,kk]=sort(abs(angle(diag(uv))),'ascend');
+        [~,kk]=sort(angle(diag(uv)),'ascend');
         
         ground(current_row,current_col) = uv(kk(1),kk(1));
         vegitation(current_row,current_col) = uv(kk(2),kk(2));
@@ -106,5 +106,5 @@ figure(11); imagesc(angle(noise)); title('2D angle(n)');
 figure(12); imagesc(abs(ground)); title('2D abs(g)');
 figure(13); imagesc(abs(vegitation)); title('2D abs(v)');
 figure(14); imagesc(abs(noise)); title('2D abs(n)');
-figure(15); imagesc(abs(vegitation - abs(ground))); title('2D abs(v-g)');
-figure(16); imagesc(angle(vegitation) - angle(ground)); title('2D angle(v-g)');
+figure(15); imagesc(abs(vegitation - abs(ground))); title('2D abs(v)-abs(g)');
+figure(16); imagesc(angle(vegitation) - angle(ground)); title('2D angle(v)-angle(g)');
