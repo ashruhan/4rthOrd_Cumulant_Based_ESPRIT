@@ -2,8 +2,12 @@
 %% Initializations
 [hh,vv,xx] =  openSARdata();
 r = 3; c = 3;
-L = r+c+1;
+
 [ylength,xlength] = size(hh.off);
+g = zeros(ylength,xlength);
+v = zeros(ylength,xlength);
+n = zeros(ylength,xlength);
+
 %% Espirit Martix Calculations
 %%%%%%%%%%%%%%%%%%%%%Pull rand line%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for row = 1:ylength;
@@ -15,7 +19,7 @@ for row = 1:ylength;
         
         if(row<r+1)&&(col<c+1)     % condition 1
             [s1,s2] = Average_Condition1(R,C,hh,vv,xx);
-            d
+            
         elseif(row<r+1)&&(c+1<col)&&(col<xlength-c)    % condition 2
             [s1,s2] = Average_Condition2(R,C,hh,vv,xx);
             
@@ -46,26 +50,30 @@ for row = 1:ylength;
         S1(3,:) = s1.x; S2(3,:) = s2.x;
         
         
-        R1 = S1*S1';  R2 = S1*S2';   A = pinv(R1)*R2;
+        R1 = S1*S1';  R2 = S1*S2';
         
-        [~,uv] = eig(A);
+        [eigenvector,eigenvalue] = eig(pinv(R1)*R2);
         
-        [~,kk]=sort(angle(diag(uv)),'ascend');
+        [~,kk]=sort(angle(diag(eigenvalue)),'descend');
         
-        g(row,col) = uv(kk(1),kk(1)); %#ok<*SAGROW>
-        v(row,col) = uv(kk(2),kk(2));
-        n(row,col) = uv(kk(3),kk(3));
         
+        if (abs(eigenvector(1,kk(1)))^2+abs(eigenvector(2,kk(1)))^2)<...
+                (abs(eigenvector(1,kk(2)))^2+abs(eigenvector(2,kk(2)))^2)
+            
+            g(row,col) = eigenvalue(kk(1),kk(1));
+            v(row,col) = eigenvalue(kk(2),kk(2));
+        else
+            
+            g(row,col) = eigenvalue(kk(2),kk(2));
+            v(row,col) = eigenvalue(kk(1),kk(1));
+            
+        end
+               
+        n(row,col) = eigenvalue(kk(3),kk(3));
     end
 end
 
 %% Plotting Results
-[x,y] = size(g);
-
-figure(1); histg = reshape(g,x*y,1); hist(angle(histg),100);
-figure(2); histv = reshape(v,x*y,1); hist(angle(histv),100)
-figure(3); histn = reshape(n,x*y,1); hist(angle(histn),100);
-
 figure(4); imagesc(angle(g)); title('angle(g)');
 figure(5); imagesc(angle(v)); title('angle(v)');
 figure(6); imagesc(angle(n)); title('angle(n)');

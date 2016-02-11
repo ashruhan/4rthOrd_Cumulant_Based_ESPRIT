@@ -3,15 +3,19 @@
 [hh,vv,xx] =  openSARdata();
 r = 3; c = 3;
 [ylength,xlength] = size(hh.off);
+g = zeros(ylength,xlength);
+v = zeros(ylength,xlength);
+n = zeros(ylength,xlength);
+
 %% Cumulant Martix Calculations
 %%%%%%%%%%%%%%%%%%%%%Pull rand line%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for row = 1:ylength;
     for col = 1:xlength;
         
-        clear('R1','R2','S1','S2','A','uv','kk')      
+        clear('R1','R2','S1','S2','A','uv','kk')
         R.r = r;R.row = row;R.ylength = ylength;
         C.c = c;C.col = col;C.xlength = xlength;
-
+        
         if(row<r+1)&&(col<c+1)     % condition 1
             [s1,s2] = Average_Condition1(R,C,hh,vv,xx);
             
@@ -41,25 +45,41 @@ for row = 1:ylength;
             
         end
         
-        S1 = [s1.h.*s1.v;
+        S1 = [s1.h.*s1.h;
+            s1.v.*s1.v;
+            s1.x.*s1.x;
+            s1.h.*s1.v;
             s1.h.*s1.x;
             s1.v.*s1.x];
         
-        S2 = [s2.h.*s2.v;
+        S2 = [s2.h.*s2.h;
+            s2.v.*s2.v;
+            s2.x.*s2.x;
+            s2.h.*s2.v;
             s2.h.*s2.x;
             s2.v.*s2.x];
         
         
-        R1 = S1*S1';  
-        R2 = S1*S2';   
-               
-        [~,uv] = eig(pinv(R1)*R2);
+        R1 = S1*S1'; R2 = S1*S2';
         
-        [~,kk]=sort(angle(diag(uv)),'ascend');
+        [eigenvector,eigenvalue] = eig(pinv(R1)*R2);
         
-        g(row,col) = uv(kk(1),kk(1)); %#ok<*SAGROW>
-        v(row,col) = uv(kk(2),kk(2));
-        n(row,col) = uv(kk(3),kk(3));
+        [~,kk]=sort(angle(diag(eigenvalue)),'descend');
+        
+        
+        if (abs(eigenvector(1,kk(1)))^2+abs(eigenvector(2,kk(1)))^2)<...
+                (abs(eigenvector(1,kk(2)))^2+abs(eigenvector(2,kk(2)))^2)
+            
+            g(row,col) = eigenvalue(kk(1),kk(1));
+            v(row,col) = eigenvalue(kk(2),kk(2));
+        else
+            
+            g(row,col) = eigenvalue(kk(2),kk(2));
+            v(row,col) = eigenvalue(kk(1),kk(1));
+            
+        end
+        
+        n(row,col) = eigenvalue(kk(3),kk(3));
         
     end
 end
