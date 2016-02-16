@@ -1,4 +1,4 @@
-%% Algorithm Fourth order
+%%Espirit Algorithm Fourth order
 clear;clc;
 %% Initializations
 fid(1)=fopen('ref_hh.dat','r');fid(2)=fopen('ref_vv.dat','r');
@@ -28,7 +28,11 @@ Lreshape = (r+c+1)^2;
 
 g = zeros(ylength-r,xlength-c);
 v = zeros(ylength-r,xlength-c);
-n = zeros(ylength-r,xlength-c);
+
+n1 = zeros(ylength-r,xlength-c);
+n2 = zeros(ylength-r,xlength-c);
+n3 = zeros(ylength-r,xlength-c);
+n4 = zeros(ylength-r,xlength-c);
 
 %% Cumulant Martix Calculations
 %%%%%%%%%%%%%%%%%%%%%Pull rand line%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,16 +63,16 @@ for row = r+1:ylength-r;
         R1 = S1*S1';  R2 = S1*S2';
    
         [eigenvec,eigenval] = eig(pinv(R1)*R2);
-        
-%         eigenveca = abs(eigenvec)
-%         eigenvalaa = abs(angle(diag(eigenval)))
 
-        [~,srt]=sort(abs(angle(diag(eigenval))),'descend');
+        [~,srt]=sort(angle(diag(eigenval)),'descend');
         
-        Leig_copol = abs(eigenvec(1,srt(1)))^2 + abs(eigenvec(2,srt(1)))^2;
-        SLeig_copol = abs(eigenvec(1,srt(2)))^2 + abs(eigenvec(2,srt(2)))^2;
+        Leig_copol = abs(eigenvec(1,srt(1))) + abs(eigenvec(2,srt(1)));
+        SLeig_copol = abs(eigenvec(1,srt(2))) + abs(eigenvec(2,srt(2)));
         
-        n(row,col) = eigenval(srt(3),srt(3));
+        n1(row,col) = eigenval(srt(3),srt(3));
+        n2(row,col) = eigenval(srt(4),srt(4));
+        n3(row,col) = eigenval(srt(5),srt(5));
+        n4(row,col) = eigenval(srt(6),srt(6));
         
         if (Leig_copol >= SLeig_copol)
             
@@ -84,10 +88,19 @@ for row = r+1:ylength-r;
         
     end
 end
-%% Plotting Results
-figure(4); imagesc(angle(g)); title('angle(g)');
-figure(5); imagesc(angle(v)); title('angle(v)');
-figure(6); imagesc(angle(n)); title('angle(n)');
-figure(7); imagesc(abs(g)); title('abs(g)');
-figure(8); imagesc(abs(v)); title('abs(v)');
-figure(9); imagesc(abs(n)); title('abs(n)');
+%% Plotting gv Results
+figure(1); imagesc(0.5*angle(g)); title('4th Ord angle(g)');
+figure(2); imagesc(0.5*angle(v)); title('4th Ord angle(v)');
+figure(3); imagesc(abs(g)); title('4th Ord abs(g)');
+figure(4); imagesc(abs(v)); title('4th Ord abs(v)');
+
+%% Plotting Noise Results
+figure(5); imagesc(0.5*angle(n1)); title('4th Ord angle(n1)');
+figure(6); imagesc(0.5*angle(n2)); title('4th Ord angle(n2)');
+figure(7); imagesc(0.5*angle(n3)); title('4th Ord angle(n3)');
+figure(8); imagesc(0.5*angle(n4)); title('4th Ord angle(n4)');
+
+figure(9); imagesc(abs(n1)); title('4th Ord abs(n1)');
+figure(10); imagesc(abs(n2)); title('4th Ord abs(n2)');
+figure(11); imagesc(abs(n3)); title('4th Ord abs(n3)');
+figure(12); imagesc(abs(n4)); title('4th Ord abs(n4)');

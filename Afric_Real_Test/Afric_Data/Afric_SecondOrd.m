@@ -63,10 +63,7 @@ for row = fliplr(r+1:ylength-r);
         
         [eigenvec,eigenval] = eig(pinv(R1)*R2);
         
-%         eigenveca = abs(eigenvec)
-%         eigenvalaa = abs(angle(diag(eigenval)))
-
-        [~,srt]=sort(abs(angle(diag(eigenval))),'descend');
+        [~,srt]=sort(angle(diag(eigenval)),'descend');
         
         Leig_copol = abs(eigenvec(1,srt(1)))^2 + abs(eigenvec(2,srt(1)))^2;
         SLeig_copol = abs(eigenvec(1,srt(2)))^2 + abs(eigenvec(2,srt(2)))^2;
@@ -89,9 +86,9 @@ for row = fliplr(r+1:ylength-r);
 end
 
 %% Plotting Results
-figure(1); imagesc(angle(g)); title('angle(g)');
-figure(2); imagesc(angle(v)); title('angle(v)');
-figure(3); imagesc(angle(n)); title('angle(n)');
-figure(5); imagesc(abs(g)); title('abs(g)');
-figure(6); imagesc(abs(v)); title('abs(v)');
-figure(7); imagesc(abs(n)); title('abs(n)');
+figure(21); imagesc(angle(g)); title('2nd Ord angle(g)');
+figure(22); imagesc(angle(v)); title('2nd Ord angle(v)');
+figure(23); imagesc(angle(n)); title('2nd Ord angle(n)');
+figure(24); imagesc(abs(g)); title('2nd Ord abs(g)');
+figure(25); imagesc(abs(v)); title('2nd Ord abs(v)');
+figure(26); imagesc(abs(n)); title('2nd Ord abs(n)');
