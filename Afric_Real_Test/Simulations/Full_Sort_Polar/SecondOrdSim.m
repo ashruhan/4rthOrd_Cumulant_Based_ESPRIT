@@ -54,39 +54,39 @@ for SNR_sample = 1:SNR_samples;
         
         [eigenvec,eigenval] = eig(pinv(R1)*R2);
         
-%         [~,srt]=sort(angle(diag(eigenval)),'descend');
-%         
-%         Leig_copol = abs(eigenvec(1,srt(1)))^2 + abs(eigenvec(2,srt(1)))^2;
-%         SLeig_copol = abs(eigenvec(1,srt(2)))^2 + abs(eigenvec(2,srt(2)))^2;
-%                 
-%         if (Leig_copol >= SLeig_copol)
-%             
-%         ground_phase(Averaged_sample) = ground_phase(Averaged_sample) + angle(eigenval(srt(1),srt(1)))/samples;
-%         ground_mag(Averaged_sample) = ground_mag(Averaged_sample) + abs(eigenval(srt(1),srt(1)))/samples;
-%         
-%         vegitation_phase(Averaged_sample) = vegitation_phase(Averaged_sample) + angle(eigenval(srt(2),srt(2)))/samples;
-%         vegitation_mag(Averaged_sample) = vegitation_mag(Averaged_sample) + abs(eigenval(srt(2),srt(2)))/samples;
-%             
-%         else
-%             
-%         ground_phase(Averaged_sample) = ground_phase(Averaged_sample) + angle(eigenval(srt(2),srt(2)))/samples;
-%         ground_mag(Averaged_sample) = ground_mag(Averaged_sample) + abs(eigenval(srt(2),srt(2)))/samples;
-%         
-%         vegitation_phase(Averaged_sample) = vegitation_phase(Averaged_sample) + angle(eigenval(srt(1),srt(1)))/samples;
-%         vegitation_mag(Averaged_sample) = vegitation_mag(Averaged_sample) + abs(eigenval(srt(1),srt(1)))/samples;
-%             
-%         end
+        [~,srt]=sort(angle(diag(eigenval)),'descend');
         
-        
-        val1 = abs(Pol_ground'*eigenvec);
-        [~,srt] = sort(val1,'descend');
+        Leig_copol = abs(eigenvec(1,srt(1)))^2 + abs(eigenvec(2,srt(1)))^2;
+        SLeig_copol = abs(eigenvec(1,srt(2)))^2 + abs(eigenvec(2,srt(2)))^2;
+                
+        if (Leig_copol >= SLeig_copol)
+            
         ground_phase(SNR_sample) = ground_phase(SNR_sample) + angle(eigenval(srt(1),srt(1)))/Average_samples;
         ground_mag(SNR_sample) = ground_mag(SNR_sample) + abs(eigenval(srt(1),srt(1)))/Average_samples;
         
-        val2 = abs(Pol_vegitation'*eigenvec);
-        [~,srt] = sort(val2,'descend');
+        vegitation_phase(SNR_sample) = vegitation_phase(SNR_sample) + angle(eigenval(srt(2),srt(2)))/Average_samples;
+        vegitation_mag(SNR_sample) = vegitation_mag(SNR_sample) + abs(eigenval(srt(2),srt(2)))/Average_samples;
+            
+        else
+            
+        ground_phase(SNR_sample) = ground_phase(SNR_sample) + angle(eigenval(srt(2),srt(2)))/Average_samples;
+        ground_mag(SNR_sample) = ground_mag(SNR_sample) + abs(eigenval(srt(2),srt(2)))/Average_samples;
+        
         vegitation_phase(SNR_sample) = vegitation_phase(SNR_sample) + angle(eigenval(srt(1),srt(1)))/Average_samples;
         vegitation_mag(SNR_sample) = vegitation_mag(SNR_sample) + abs(eigenval(srt(1),srt(1)))/Average_samples;
+            
+        end
+        
+        
+%         val1 = abs(Pol_ground'*eigenvec);
+%         [~,srt] = sort(val1,'descend');
+%         ground_phase(SNR_sample) = ground_phase(SNR_sample) + angle(eigenval(srt(1),srt(1)))/Average_samples;
+%         ground_mag(SNR_sample) = ground_mag(SNR_sample) + abs(eigenval(srt(1),srt(1)))/Average_samples;
+%         
+%         val2 = abs(Pol_vegitation'*eigenvec);
+%         [~,srt] = sort(val2,'descend');
+%         vegitation_phase(SNR_sample) = vegitation_phase(SNR_sample) + angle(eigenval(srt(1),srt(1)))/Average_samples;
+%         vegitation_mag(SNR_sample) = vegitation_mag(SNR_sample) + abs(eigenval(srt(1),srt(1)))/Average_samples;
         
     end
 end
