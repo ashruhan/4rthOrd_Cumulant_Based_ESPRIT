@@ -101,17 +101,17 @@ for SNR_sample = 1:length(SNR);
             polarfilter_4 = abs(pol_cum_signal_one'*eigenvec_4);
             [~,srt_4] = sort(polarfilter_4,'descend');
             if (SNR(SNR_sample) == 10)
-                phase_dist_fourth_10(window) = phase_dist_fourth_10(window) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
-                mag_dist_fourth_10(window) = mag_dist_fourth_10(window) + (abs(eigenval_2(srt_2(1),srt_2(1))));
+                phase_dist_fourth_10(window) = phase_dist_fourth_10(window) + ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1))))^2);
+                mag_dist_fourth_10(window) = mag_dist_fourth_10(window) + (abs(eigenval_4(srt_2(1),srt_2(1))));
                 
             elseif (SNR(SNR_sample) == 0)
-                phase_dist_fourth_0(window) = phase_dist_fourth_0(window) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
-                mag_dist_fourth_0(window) =  mag_dist_fourth_0(window) + (abs(eigenval_2(srt_2(1),srt_2(1))));
+                phase_dist_fourth_0(window) = phase_dist_fourth_0(window) + ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1))))^2);
+                mag_dist_fourth_0(window) =  mag_dist_fourth_0(window) + (abs(eigenval_4(srt_2(1),srt_2(1))));
                 
                 
             elseif (SNR(SNR_sample) == -10)
-                phase_dist_fourth_n10(window) =  phase_dist_fourth_n10(window) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
-                mag_dist_fourth_n10(window) =  mag_dist_fourth_n10(window) + (abs(eigenval_2(srt_2(1),srt_2(1))));
+                phase_dist_fourth_n10(window) =  phase_dist_fourth_n10(window) + ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1))))^2);
+                mag_dist_fourth_n10(window) =  mag_dist_fourth_n10(window) + (abs(eigenval_4(srt_2(1),srt_2(1))));
                 
             end
         end

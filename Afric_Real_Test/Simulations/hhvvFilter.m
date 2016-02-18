@@ -14,10 +14,10 @@ Averaged_samples = 100;
 Window = 49;    %size of window
 SNR_samples = 30;
 %
-ground_phase_4=zeros(SNR_samples,1); 
-ground_mag_4=zeros(SNR_samples,1); 
-ground_phase_2=zeros(SNR_samples,1); 
-ground_mag_2=zeros(SNR_samples,1); 
+ground_phase_4=zeros(SNR_samples,1);
+ground_mag_4=zeros(SNR_samples,1);
+ground_phase_2=zeros(SNR_samples,1);
+ground_mag_2=zeros(SNR_samples,1);
 
 vegitation_phase_4=zeros(SNR_samples,1);
 vegitation_mag_4=zeros(SNR_samples,1);
@@ -43,7 +43,7 @@ for SNR_sample = 1:SNR_samples;
         s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
         
         
-        %% Cumulant Algorithm
+        %% Fourth Order ESPRIT
         S1_4=[s1_Noise(1,:).*s1_Noise(1,:)
             s1_Noise(2,:).*s1_Noise(2,:)
             s1_Noise(3,:).*s1_Noise(3,:)
@@ -60,10 +60,10 @@ for SNR_sample = 1:SNR_samples;
         
         R1_4 = S1_4*S1_4'/Window;
         R2_4 = S1_4*S2_4'/Window;
-                
+        
         [eigenvec_4,eigenval_4] = eig(pinv(R1_4)*R2_4);
         
-        [~,srt_4]=sort(angle(diag(eigenval_4)),'descend');
+        [~,srt_4]=sort(abs(diag(eigenval_4)),'descend');
         
         Leig_copol = abs(eigenvec_4(1,srt_4(1)))^2 + abs(eigenvec_4(2,srt_4(1)))^2;
         SLeig_copol = abs(eigenvec_4(1,srt_4(2)))^2 + abs(eigenvec_4(2,srt_4(2)))^2;
@@ -85,7 +85,7 @@ for SNR_sample = 1:SNR_samples;
             vegitation_mag_4(SNR_sample) = vegitation_mag_4(SNR_sample) + abs(eigenval_4(srt_4(1),srt_4(1)))/Averaged_samples;
             
         end
-        %% ESPRIT Algorithm
+        %% Second Order ESPRIT
         S1_2 = [s1_Noise(1,:)
             s1_Noise(2,:)
             s1_Noise(3,:)];
@@ -97,9 +97,9 @@ for SNR_sample = 1:SNR_samples;
         R1_2 = S1_2*S1_2'/Window;
         R2_2 = S1_2*S2_2'/Window;
         
-       [eigenvec_2,eigenval_2] = eig(pinv(R1_2)*R2_2);
+        [eigenvec_2,eigenval_2] = eig(pinv(R1_2)*R2_2);
         
-        [~,srt_2]=sort(angle(diag(eigenval_2)),'descend');
+        [~,srt_2]=sort(abs(diag(eigenval_2)),'descend');
         
         Leig_copol = abs(eigenvec_2(1,srt_2(1)))^2 + abs(eigenvec_2(2,srt_2(1)))^2;
         SLeig_copol = abs(eigenvec_2(1,srt_2(2)))^2 + abs(eigenvec_2(2,srt_2(2)))^2;

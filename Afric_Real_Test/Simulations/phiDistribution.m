@@ -64,16 +64,16 @@ for SNR_sample = 1:length(SNR);
         polarfilter_2 = abs(pol_signal_one'*eigenvect_2);
         [~,srt_2] = sort(polarfilter_2,'descend');
         if (SNR(SNR_sample) == 10)
-            phase_dist_second_10(sample) = ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
+            phase_dist_second_10(sample) = ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1)))));
             mag_dist_second_10(sample) =  (abs(eigenval_2(srt_2(1),srt_2(1))));
             
         elseif (SNR(SNR_sample) == 0)
-            phase_dist_second_0(sample) = ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
+            phase_dist_second_0(sample) = ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1)))));
             mag_dist_second_0(sample) = (abs(eigenval_2(srt_2(1),srt_2(1))));
             
             
         elseif (SNR(SNR_sample) == -10)
-            phase_dist_second_n10(sample) = ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
+            phase_dist_second_n10(sample) = ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1)))));
             mag_dist_second_n10(sample) = (abs(eigenval_2(srt_2(1),srt_2(1))));
             
         end
@@ -100,28 +100,28 @@ for SNR_sample = 1:length(SNR);
         polarfilter_4 = abs(pol_cum_signal_one'*eigenvec_4);
         [~,srt_4] = sort(polarfilter_4,'descend');
         if (SNR(SNR_sample) == 10)
-            phase_dist_fourth_10(sample) = ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
-            mag_dist_fourth_10(sample) = (abs(eigenval_2(srt_2(1),srt_2(1))));
+            phase_dist_fourth_10(sample) = ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1)))));
+            mag_dist_fourth_10(sample) = (abs(eigenval_4(srt_2(1),srt_2(1))));
             
         elseif (SNR(SNR_sample) == 0)
-            phase_dist_fourth_0(sample) = ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
-            mag_dist_fourth_0(sample) =  (abs(eigenval_2(srt_2(1),srt_2(1))));
+            phase_dist_fourth_0(sample) = ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1)))));
+            mag_dist_fourth_0(sample) =  (abs(eigenval_4(srt_2(1),srt_2(1))));
             
             
         elseif (SNR(SNR_sample) == -10)
-            phase_dist_fourth_n10(sample) = ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
-            mag_dist_fourth_n10(sample) = (abs(eigenval_2(srt_2(1),srt_2(1))));
+            phase_dist_fourth_n10(sample) = ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1)))));
+            mag_dist_fourth_n10(sample) = (abs(eigenval_4(srt_2(1),srt_2(1))));
             
         end
     end
 end
-phase_est_second_10_rms = sqrt(phase_dist_second_10)*180/pi;
-phase_est_second_0_rms = sqrt(phase_dist_second_0)*180/pi;
-phase_est_second_n10_rms = sqrt(phase_dist_second_n10)*180/pi;
+phase_est_second_10_rms = (phase_dist_second_10)*180/pi;
+phase_est_second_0_rms = (phase_dist_second_0)*180/pi;
+phase_est_second_n10_rms = (phase_dist_second_n10)*180/pi;
 
-phase_est_fourth_10_rms = sqrt(phase_dist_fourth_10)*180/pi;
-phase_est_fourth_0_rms = sqrt(phase_dist_fourth_0)*180/pi;
-phase_est_fourth_n10_rms = sqrt(phase_dist_fourth_n10)*180/pi;
+phase_est_fourth_10_rms = (phase_dist_fourth_10)*180/pi;
+phase_est_fourth_0_rms = (phase_dist_fourth_0)*180/pi;
+phase_est_fourth_n10_rms = (phase_dist_fourth_n10)*180/pi;
 
 %% Plotting Results
 bins = 50;
@@ -130,6 +130,7 @@ figure(1);
 hist(phase_est_second_10_rms,bins);
 title('phase dist second Ord rms error (degrees) SNR 10 (dB)');
 xlabel('Degrees of Error');
+
 figure(2);
 hist(phase_est_second_0_rms,bins);
 title('phase dist second Ord rms error (degrees) SNR 0 (dB)');
