@@ -64,7 +64,7 @@ for row = r+1:ylength-r;
    
         [eigenvec,eigenval] = eig(pinv(R1)*R2);
 
-        [~,srt]=sort(angle(diag(eigenval)),'descend');
+        [~,srt]=sort(abs(diag(eigenval)),'descend');
         
         Leig_copol = abs(eigenvec(1,srt(1))) + abs(eigenvec(2,srt(1)));
         SLeig_copol = abs(eigenvec(1,srt(2))) + abs(eigenvec(2,srt(2)));

@@ -85,22 +85,8 @@ signal_one_phase_est_second_rmnsqrd = sqrt(signal_one_phase_est_second)*180/pi;
 signal_one_phase_est_fourth_mnsqrd = sqrt(signal_one_phase_est_fourth)*180/pi;
 
 %% Plotting Results
- 
-% figure(1);
-% plot(SNR,log10(signal_one_phase_est_fourth_mnsqrd),'g');
-% title(' Co and Cross Polarizations (dB)');
-% xlabel('SNR (dB)');ylabel('Mean Square Error (dB)')
-% legend('4rth Order Error','Location','northeast');
- 
-figure(1);
-plot(SNR,signal_one_phase_est_second_rmnsqrd,'b');
-hold on;
-plot(SNR,signal_one_phase_est_fourth_mnsqrd,'black');
-hold off;
-xlabel('SNR');ylabel('RMS Error (degrees)')
-legend('2nd Order Error','4rth Order Error','Location','northeast');
- 
-figure(2);title('RMS Error (dB)')
+  
+figure(1);title('RMS Error (dB)')
 plot(SNR,10*log10(signal_one_phase_est_second_rmnsqrd),'b');
 hold on;
 plot(SNR,10*log10(signal_one_phase_est_fourth_mnsqrd),'black');
@@ -108,7 +94,7 @@ hold off;
 xlabel('SNR');ylabel('RMS Error(dB)')
 legend('2nd Order Error','4rth Order Error','Location','northeast');
 
-figure(3);title('RMS Error vs Coherence')
+figure(2);title('RMS Error vs Coherence')
 plot(signal_one_mag_est_second,signal_one_phase_est_second_rmnsqrd,'b');
 hold on;
 plot(signal_one_mag_est_fourth,signal_one_phase_est_fourth_mnsqrd,'black');
