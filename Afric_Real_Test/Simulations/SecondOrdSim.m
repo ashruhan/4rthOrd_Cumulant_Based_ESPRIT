@@ -93,11 +93,21 @@ xlabel('SNR (dB)');ylabel('RMS Error (Degrees)');
 hold on;
 plot(SNR,ground_phase_rmse_2,'bo');
 plot(SNR,vegitation_phase_rmse_2,'go');
-axis([-20, 10, -25 100]);
+axis([-20, 10, 0, 100]);
 hold off;
 legend('2nd Order Ground RMS Error','2nd Order Vegitation RMS Error','Location','northeast');
 
 figure(3)
+title('2nd Order ESPRIT RMS Error vs Coherence')
+xlabel('Coherence');ylabel('RMS Error (Degrees)');
+hold on;
+plot(ground_mag_2,ground_phase_rmse_2,'bo');
+plot(vegitation_mag_2,vegitation_phase_rmse_2,'go');
+axis([0, 1, 0 100]);
+hold off;
+legend('2nd Order Ground','2nd Order Vegitation','Location','northeast');
+
+figure(4)
 title('2nd Order ESPRIT Coherance');
 xlabel('SNR (dB)');ylabel('Maginitude')
 hold on;
