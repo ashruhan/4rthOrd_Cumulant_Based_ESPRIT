@@ -6,7 +6,8 @@ alpha = 1;
 pol_signal_one = [1;-1;0]./sqrt(2);
 pol_cum_signal_one = [1;1;0;-1;0;0]./sqrt(3); %ground
 
-signal_one_offset = 30*pi/180;
+S_O = 30;
+signal_one_offset = S_O*pi/180;
 
 Averaged_samples = 1000;
 Window = 49;    %size of window
@@ -100,58 +101,82 @@ for SNR_sample = 1:length(SNR);
         polarfilter_4 = abs(pol_cum_signal_one'*eigenvec_4);
         [~,srt_4] = sort(polarfilter_4,'descend');
         if (SNR(SNR_sample) == 10)
-            phase_dist_fourth_10(sample) = ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1)))));
+            phase_dist_fourth_10(sample) = ((signal_one_offset + 0.5*angle(eigenval_4(srt_2(1),srt_2(1)))));
             mag_dist_fourth_10(sample) = (abs(eigenval_4(srt_2(1),srt_2(1))));
             
         elseif (SNR(SNR_sample) == 0)
-            phase_dist_fourth_0(sample) = ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1)))));
+            phase_dist_fourth_0(sample) = ((signal_one_offset + 0.5*angle(eigenval_4(srt_2(1),srt_2(1)))));
             mag_dist_fourth_0(sample) =  (abs(eigenval_4(srt_2(1),srt_2(1))));
             
             
         elseif (SNR(SNR_sample) == -10)
-            phase_dist_fourth_n10(sample) = ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1)))));
+            phase_dist_fourth_n10(sample) = ((signal_one_offset + 0.5*angle(eigenval_4(srt_2(1),srt_2(1)))));
             mag_dist_fourth_n10(sample) = (abs(eigenval_4(srt_2(1),srt_2(1))));
             
         end
     end
 end
-phase_est_second_10_rms = (phase_dist_second_10)*180/pi;
-phase_est_second_0_rms = (phase_dist_second_0)*180/pi;
-phase_est_second_n10_rms = (phase_dist_second_n10)*180/pi;
+phase_dist_second_10 = (phase_dist_second_10)*180/pi;
+phase_dist_second_0 = (phase_dist_second_0)*180/pi;
+phase_dist_second_n10 = (phase_dist_second_n10)*180/pi;
 
-phase_est_fourth_10_rms = (phase_dist_fourth_10)*180/pi;
-phase_est_fourth_0_rms = (phase_dist_fourth_0)*180/pi;
-phase_est_fourth_n10_rms = (phase_dist_fourth_n10)*180/pi;
+phase_dist_fourth_10 = (phase_dist_fourth_10)*180/pi;
+phase_dist_fourth_0 = (phase_dist_fourth_0)*180/pi;
+phase_dist_fourth_n10 = (phase_dist_fourth_n10)*180/pi;
 
 %% Plotting Results
 bins = 50;
+xmin = S_O-180;
+xmax = S_O+180;
+ymin = 0;
+ymax = 300;
 
 figure(1);
-hist(phase_est_second_10_rms,bins);
-title('phase dist second Ord rms error (degrees) SNR 10 (dB)');
+subplot(2,1,1);
+hist(phase_dist_second_10,bins);
+title('Phase Error Distribution SNR 10 (dB)');
 xlabel('Degrees of Error');
+legend('Second Order');
+axis([xmin,xmax,ymin,ymax]);
 
+% figure(4);
+subplot(2,1,2);
+hist(phase_dist_fourth_10,bins);
+title('Phase Error Distribution SNR 10 (dB)');
+xlabel('Degrees of Error');
+legend('Fourth Order');
+axis([xmin,xmax,ymin,ymax]);
+
+ymax = 200;
 figure(2);
-hist(phase_est_second_0_rms,bins);
-title('phase dist second Ord rms error (degrees) SNR 0 (dB)');
+subplot(2,1,1);
+hist(phase_dist_second_0,bins);
+title('Phase Error Distribution SNR 0 (dB)');
 xlabel('Degrees of Error');
+legend('Second Order');
+axis([xmin,xmax,ymin,ymax]);
 
+% figure(5);
+subplot(2,1,2);
+hist(phase_dist_fourth_0,bins);
+title('Phase Error Distribution SNR 0 (dB)');
+xlabel('Degrees of Error');
+legend('Fourth Order');
+axis([xmin,xmax,ymin,ymax]);
+
+ymax = 150;
 figure(3);
-hist(phase_est_second_n10_rms,bins);
-title('phase dist second Ord rms error (degrees) SNR -10 (dB)');
+subplot(2,1,1);
+hist(phase_dist_second_n10,bins);
+title('Phase Error Distribution SNR -10 (dB)');
 xlabel('Degrees of Error');
+legend('Second Order');
+axis([xmin,xmax,ymin,ymax]);
 
-figure(4);
-hist(phase_est_fourth_10_rms,bins);
-title('phase dist fourth Ord rms error (degrees) SNR 10 (dB)');
+% figure(6);
+subplot(2,1,2);
+hist(phase_dist_fourth_n10,bins);
+title('Phase Error Distribution SNR -10 (dB)');
 xlabel('Degrees of Error');
-
-figure(5);
-hist(phase_est_fourth_0_rms,bins);
-title('phase dist fourth Ord rms error (degrees) SNR 0 (dB)');
-xlabel('Degrees of Error');
-
-figure(6);
-hist(phase_est_fourth_n10_rms,bins);
-title('phase dist fourth Ord rms error (degrees) SNR -10 (dB)');
-xlabel('Degrees of Error');
+legend('Fourth Order');
+axis([xmin,xmax,ymin,ymax]);

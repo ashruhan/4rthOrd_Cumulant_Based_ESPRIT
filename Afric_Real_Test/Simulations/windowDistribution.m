@@ -65,17 +65,17 @@ for SNR_sample = 1:length(SNR);
             polarfilter_2 = abs(pol_signal_one'*eigenvect_2);
             [~,srt_2] = sort(polarfilter_2,'descend');
             if (SNR(SNR_sample) == 10)
-                phase_dist_second_10(window) = phase_dist_second_10(window) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
-                mag_dist_second_10(window) =  mag_dist_second_10(window) + (abs(eigenval_2(srt_2(1),srt_2(1))));
+                phase_dist_second_10(window) = phase_dist_second_10(window) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2)/Averaged_samples;
+                mag_dist_second_10(window) =  mag_dist_second_10(window) + (abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;
                 
             elseif (SNR(SNR_sample) == 0)
-                phase_dist_second_0(window) = phase_dist_second_0(window) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
-                mag_dist_second_0(window) = mag_dist_second_0(window) + (abs(eigenval_2(srt_2(1),srt_2(1))));
+                phase_dist_second_0(window) = phase_dist_second_0(window) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2)/Averaged_samples;
+                mag_dist_second_0(window) = mag_dist_second_0(window) + (abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;
                 
                 
             elseif (SNR(SNR_sample) == -10)
-                phase_dist_second_n10(window) = phase_dist_second_n10(window) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2);
-                mag_dist_second_n10(window) = mag_dist_second_n10(window) + (abs(eigenval_2(srt_2(1),srt_2(1))));
+                phase_dist_second_n10(window) = phase_dist_second_n10(window) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2)/Averaged_samples;
+                mag_dist_second_n10(window) = mag_dist_second_n10(window) + (abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;
                 
             end
             %% Fourth Order Statistics
@@ -101,17 +101,17 @@ for SNR_sample = 1:length(SNR);
             polarfilter_4 = abs(pol_cum_signal_one'*eigenvec_4);
             [~,srt_4] = sort(polarfilter_4,'descend');
             if (SNR(SNR_sample) == 10)
-                phase_dist_fourth_10(window) = phase_dist_fourth_10(window) + ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1))))^2);
-                mag_dist_fourth_10(window) = mag_dist_fourth_10(window) + (abs(eigenval_4(srt_2(1),srt_2(1))));
+                phase_dist_fourth_10(window) = phase_dist_fourth_10(window) + ((signal_one_offset + 0.5*angle(eigenval_4(srt_2(1),srt_2(1))))^2)/Averaged_samples;
+                mag_dist_fourth_10(window) = mag_dist_fourth_10(window) + (abs(eigenval_4(srt_2(1),srt_2(1))))/Averaged_samples;
                 
             elseif (SNR(SNR_sample) == 0)
-                phase_dist_fourth_0(window) = phase_dist_fourth_0(window) + ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1))))^2);
-                mag_dist_fourth_0(window) =  mag_dist_fourth_0(window) + (abs(eigenval_4(srt_2(1),srt_2(1))));
+                phase_dist_fourth_0(window) = phase_dist_fourth_0(window) + ((signal_one_offset + 0.5*angle(eigenval_4(srt_2(1),srt_2(1))))^2)/Averaged_samples;
+                mag_dist_fourth_0(window) =  mag_dist_fourth_0(window) + (abs(eigenval_4(srt_2(1),srt_2(1))))/Averaged_samples;
                 
                 
             elseif (SNR(SNR_sample) == -10)
-                phase_dist_fourth_n10(window) =  phase_dist_fourth_n10(window) + ((signal_one_offset + angle(eigenval_4(srt_2(1),srt_2(1))))^2);
-                mag_dist_fourth_n10(window) =  mag_dist_fourth_n10(window) + (abs(eigenval_4(srt_2(1),srt_2(1))));
+                phase_dist_fourth_n10(window) =  phase_dist_fourth_n10(window) + ((signal_one_offset + 0.5*angle(eigenval_4(srt_2(1),srt_2(1))))^2)/Averaged_samples;
+                mag_dist_fourth_n10(window) =  mag_dist_fourth_n10(window) + (abs(eigenval_4(srt_2(1),srt_2(1))))/Averaged_samples;
                 
             end
         end
@@ -126,32 +126,41 @@ phase_est_fourth_0_rms = sqrt(phase_dist_fourth_0)*180/pi;
 phase_est_fourth_n10_rms = sqrt(phase_dist_fourth_n10)*180/pi;
 
 %% Plotting Results
+%  load('windowDistribution10Ksamples.mat');
+
 figure(1);
+subplot(2,1,1);
 plot(win,phase_est_second_10_rms);
 title('window dist second Ord rms error (degrees) SNR 10 (dB)');
 xlabel('Window Size');ylabel('Averave RMS error (degrees)');
 
-figure(2);
-plot(win,phase_est_second_0_rms);
-title('window dist second Ord rms error (degrees) SNR 0 (dB)');
-xlabel('Window Size');ylabel('Averave RMS error (degrees)');
-
-figure(3);
-plot(win,phase_est_second_n10_rms);
-title('window dist second Ord rms error (degrees) SNR -10 (dB)');
-xlabel('Window Size');ylabel('Averave RMS error (degrees)');
-
-figure(4);
+% figure(4);
+subplot(2,1,2);
 plot(win,phase_est_fourth_10_rms);
 title('window dist fourth Ord rms error (degrees) SNR 10 (dB)');
 xlabel('Window Size');ylabel('Averave RMS error (degrees)');
 
-figure(5);
+figure(2);
+subplot(2,1,1);
+plot(win,phase_est_second_0_rms);
+title('window dist second Ord rms error (degrees) SNR 0 (dB)');
+xlabel('Window Size');ylabel('Averave RMS error (degrees)');
+
+% figure(5);
+subplot(2,1,2);
 plot(win,phase_est_fourth_0_rms);
 title('window dist fourth Ord rms error (degrees) SNR 0 (dB)');
 xlabel('Window Size');ylabel('Averave RMS error (degrees)');
 
-figure(6);
+
+figure(3);
+subplot(2,1,1);
+plot(win,phase_est_second_n10_rms);
+title('window dist second Ord rms error (degrees) SNR -10 (dB)');
+xlabel('Window Size');ylabel('Averave RMS error (degrees)');
+
+% figure(6);
+subplot(2,1,2);
 plot(win,phase_est_fourth_n10_rms);
 title('window dist fourth Ord rms error (degrees) SNR -10 (dB)');
 xlabel('Window Size');ylabel('Averave RMS error (degrees)');

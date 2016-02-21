@@ -8,7 +8,7 @@ pol_cum_signal_one = [1;1;0;-1;0;0]./sqrt(3); %ground
 
 signal_one_offset = 30*pi/180;
 
-Averaged_samples = 100;
+Averaged_samples = 10000;
 Window = 49;    %size of window
 SNR_samples = 30;
  
@@ -85,11 +85,11 @@ signal_one_phase_est_second_rmnsqrd = sqrt(signal_one_phase_est_second)*180/pi;
 signal_one_phase_est_fourth_mnsqrd = sqrt(signal_one_phase_est_fourth)*180/pi;
 
 %% Plotting Results
-  
+%load('RMS_Error10Ksamples.mat')
 figure(1);title('RMS Error (dB)')
-plot(SNR,10*log10(signal_one_phase_est_second_rmnsqrd),'b');
+plot(SNR,(signal_one_phase_est_second_rmnsqrd),'b');
 hold on;
-plot(SNR,10*log10(signal_one_phase_est_fourth_mnsqrd),'black');
+plot(SNR,(signal_one_phase_est_fourth_mnsqrd),'black');
 hold off;
 xlabel('SNR');ylabel('RMS Error(dB)')
 legend('2nd Order Error','4rth Order Error','Location','northeast');
