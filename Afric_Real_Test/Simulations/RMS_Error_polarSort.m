@@ -2,21 +2,28 @@
 clc;clear;
 %% Initializations
 alpha = 1;
- 
-pol_signal_one = [1;-1;0]./sqrt(2);
-pol_cum_signal_one = [1;1;0;-1;0;0]./sqrt(3); %ground
+beta = 1;
 
-signal_one_offset = 30*pi/180;
+Pol_ground_2 = [1;-1;0]/sqrt(2);
+Pol_ground_4 = [1;1;0;-1;0;0]/sqrt(3); %ground
+Pol_vegitation_2 = [1;1;1]/sqrt(3);
+Pol_vegitation_4 = [1;1;1;1;1;1]/sqrt(6); %vegitation
 
-Averaged_samples = 10000;
-Window = 49;    %size of window
+G_O = 20;
+ground_offset = G_O*pi/180; % ground interferomitry offset
+V_O = 20;
+vegitation_offset = V_O*pi/180;    % veg interferomitry offset
+
+
+Averaged_samples = 100;
+Window = 81;    %size of window
 SNR_samples = 30;
  
-signal_one_phase_est_second = zeros(1,SNR_samples);
-signal_one_mag_est_second = zeros(1,SNR_samples);
+ground_phase_est_second = zeros(1,SNR_samples);
+ground_mag_est_second = zeros(1,SNR_samples);
  
-signal_one_phase_est_fourth = zeros(1,SNR_samples);
-signal_one_mag_est_fourth = zeros(1,SNR_samples);
+ground_phase_est_fourth = zeros(1,SNR_samples);
+ground_mag_est_fourth = zeros(1,SNR_samples);
  
 SNR = zeros(1,SNR_samples);
 %% Generic Loop Calculations
@@ -28,10 +35,11 @@ for SNR_sample = 1:SNR_samples;
     
     for sample = 1:Averaged_samples
         %% Random Statistics Used for Both second and forth order Algorithms
-        signal_one =  pol_signal_one*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
+        g =  Pol_ground_2*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
+        v =  Pol_vegitation_2*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
         
-        s1 = alpha*signal_one;
-        s2 = alpha*exp(1i*signal_one_offset)*signal_one ;
+        s1 = alpha*g + beta*v;
+        s2 = alpha*exp(1i*ground_offset)*g + beta*exp(1i*vegitation_offset)*v;
         
         s1_Noise = s1 + Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
         s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
@@ -49,10 +57,13 @@ for SNR_sample = 1:SNR_samples;
                 
         [eigenvect_2,eigenval_2] = eig(pinv(R1_2)*R2_2);
         
-        polarfilter_2 = abs(pol_signal_one'*eigenvect_2);
+        polarfilter_2 = abs(Pol_ground_2'*eigenvect_2);
         [~,srt_2] = sort(polarfilter_2,'descend');
-        signal_one_phase_est_second(SNR_sample) = signal_one_phase_est_second(SNR_sample) + ((signal_one_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2)/Averaged_samples;
-        signal_one_mag_est_second(SNR_sample) = signal_one_mag_est_second(SNR_sample) + (abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;
+        ground_phase_est_second(SNR_sample) = ground_phase_est_second(SNR_sample)...
+            + ((ground_offset - abs(angle(eigenval_2(srt_2(1),srt_2(1)))))^2)/Averaged_samples;
+        
+        ground_mag_est_second(SNR_sample) = ground_mag_est_second(SNR_sample)...
+            + (abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;
         
         %% Fourth Order Statistics
         S1_4 = [s1_Noise(1,:).*s1_Noise(1,:)
@@ -74,30 +85,32 @@ for SNR_sample = 1:SNR_samples;
         
         [eigenvec_4,eigenval_4] = eig(pinv(R1_4)*R2_4);
         
-        polarfilter_4 = abs(pol_cum_signal_one'*eigenvec_4);
+        polarfilter_4 = abs(Pol_ground_4'*eigenvec_4);
         [~,srt_4] = sort(polarfilter_4,'descend');
-        signal_one_phase_est_fourth(SNR_sample) = signal_one_phase_est_fourth(SNR_sample) + ((signal_one_offset + 0.5*angle(eigenval_4(srt_4(1),srt_4(1))))^2)/Averaged_samples;
-        signal_one_mag_est_fourth(SNR_sample) = signal_one_mag_est_fourth(SNR_sample) + (abs(eigenval_4(srt_4(1),srt_4(1))))/Averaged_samples;
+        ground_phase_est_fourth(SNR_sample) = ground_phase_est_fourth(SNR_sample)...
+            + ((ground_offset - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
+        ground_mag_est_fourth(SNR_sample) = ground_mag_est_fourth(SNR_sample)...
+            + (abs(eigenval_4(srt_4(1),srt_4(1))))/Averaged_samples;
         
     end
 end
-signal_one_phase_est_second_rmnsqrd = sqrt(signal_one_phase_est_second)*180/pi;
-signal_one_phase_est_fourth_mnsqrd = sqrt(signal_one_phase_est_fourth)*180/pi;
+ground_phase_est_second_rmnsqrd = sqrt(ground_phase_est_second)*180/pi;
+ground_phase_est_fourth_mnsqrd = sqrt(ground_phase_est_fourth)*180/pi;
 
 %% Plotting Results
 %load('RMS_Error10Ksamples.mat')
 figure(1);title('RMS Error (dB)')
-plot(SNR,(signal_one_phase_est_second_rmnsqrd),'b');
+plot(SNR,10*log10(ground_phase_est_second_rmnsqrd),'b');
 hold on;
-plot(SNR,(signal_one_phase_est_fourth_mnsqrd),'black');
+plot(SNR,10*log10(ground_phase_est_fourth_mnsqrd),'black');
 hold off;
 xlabel('SNR');ylabel('RMS Error(dB)')
 legend('2nd Order Error','4rth Order Error','Location','northeast');
 
 figure(2);title('RMS Error vs Coherence')
-plot(signal_one_mag_est_second,signal_one_phase_est_second_rmnsqrd,'b');
+plot(ground_mag_est_second,ground_phase_est_second_rmnsqrd,'b');
 hold on;
-plot(signal_one_mag_est_fourth,signal_one_phase_est_fourth_mnsqrd,'black');
+plot(ground_mag_est_fourth,ground_phase_est_fourth_mnsqrd,'black');
 hold off;
 ylabel('RMS Error (degrees)');xlabel('Coherence')
 legend('2nd Order Error Vs Coherence','4rth Order Error Vs Coherence','Location','northeast');

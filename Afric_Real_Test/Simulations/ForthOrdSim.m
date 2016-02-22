@@ -3,7 +3,7 @@ clc;clear;
 %% Initializations
 
 Averaged_samples = 1;
-Window = 49;    %size of window
+Window = 81;    %size of window
 SNR_samples = 30;
 
 alpha = 1; %ground weighting factor

@@ -10,7 +10,7 @@ S_O = 30;
 signal_one_offset = S_O*pi/180;
 
 Averaged_samples = 1000;
-Window = 49;    %size of window
+Window = 81;    %size of window
 
 
 phase_dist_second_10 = zeros(1,Averaged_samples);
@@ -125,29 +125,14 @@ phase_dist_fourth_0 = (phase_dist_fourth_0)*180/pi;
 phase_dist_fourth_n10 = (phase_dist_fourth_n10)*180/pi;
 
 %% Plotting Results
-bins = 50;
+bins = 200;
 xmin = S_O-180;
 xmax = S_O+180;
 ymin = 0;
-ymax = 300;
 
-figure(1);
-subplot(2,1,1);
-hist(phase_dist_second_10,bins);
-title('Phase Error Distribution SNR 10 (dB)');
-xlabel('Degrees of Error');
-legend('Second Order');
-axis([xmin,xmax,ymin,ymax]);
 
-% figure(4);
-subplot(2,1,2);
-hist(phase_dist_fourth_10,bins);
-title('Phase Error Distribution SNR 10 (dB)');
-xlabel('Degrees of Error');
-legend('Fourth Order');
-axis([xmin,xmax,ymin,ymax]);
 
-ymax = 200;
+ymax = 75;
 figure(2);
 subplot(2,1,1);
 hist(phase_dist_second_0,bins);
@@ -164,7 +149,7 @@ xlabel('Degrees of Error');
 legend('Fourth Order');
 axis([xmin,xmax,ymin,ymax]);
 
-ymax = 150;
+ymax = 75;
 figure(3);
 subplot(2,1,1);
 hist(phase_dist_second_n10,bins);
@@ -177,6 +162,26 @@ axis([xmin,xmax,ymin,ymax]);
 subplot(2,1,2);
 hist(phase_dist_fourth_n10,bins);
 title('Phase Error Distribution SNR -10 (dB)');
+xlabel('Degrees of Error');
+legend('Fourth Order');
+axis([xmin,xmax,ymin,ymax]);
+
+ymax = 50;
+xmin= -10; 
+xmax = 10;
+
+figure(1);
+subplot(2,1,1);
+hist(phase_dist_second_10,bins);
+title('Phase Error Distribution SNR 10 (dB)');
+xlabel('Degrees of Error');
+legend('Second Order');
+axis([xmin,xmax,ymin,ymax]);
+
+% figure(4);
+subplot(2,1,2);
+hist(phase_dist_fourth_10,bins);
+title('Phase Error Distribution SNR 10 (dB)');
 xlabel('Degrees of Error');
 legend('Fourth Order');
 axis([xmin,xmax,ymin,ymax]);

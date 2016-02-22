@@ -11,7 +11,7 @@ ground_offset = 30*pi/180; % ground interferomitry offset
 vegitation_offset = 50*pi/180;    % veg interferomitry offset
 %
 Averaged_samples = 100;
-Window = 49;    %size of window
+Window = 81;    %size of window
 SNR_samples = 30;
 %
 ground_phase_4=zeros(SNR_samples,1);
