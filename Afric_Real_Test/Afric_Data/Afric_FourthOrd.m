@@ -25,15 +25,13 @@ xxref = xx.ref;xxoff = xx.off;
 r = 7; c = 7;
 L = r+c+1;
 Lreshape = (r+c+1)^2;
-
+eye_w = 0.3737;
 g = zeros(ylength-r,xlength-c);
 v = zeros(ylength-r,xlength-c);
 
-n1 = zeros(ylength-r,xlength-c);
-n2 = zeros(ylength-r,xlength-c);
-n3 = zeros(ylength-r,xlength-c);
-n4 = zeros(ylength-r,xlength-c);
-
+forth_order = 6;
+sort_ground_4 = zeros(forth_order,1);
+sort_vegetation_4 = zeros(forth_order,1);
 %% Cumulant Martix Calculations
 %%%%%%%%%%%%%%%%%%%%%Pull rand line%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for row = r+1:ylength-r;
@@ -60,31 +58,22 @@ for row = r+1:ylength-r;
         S1 = [sh1.*sh1;sv1.*sv1;sx1.*sx1;sh1.*sv1;sh1.*sx1;sv1.*sx1;];
         S2 = [sh2.*sh2;sv2.*sv2;sx2.*sx2;sh2.*sv2;sh2.*sx2;sv2.*sx2;];
         
-        R1 = S1*S1';  R2 = S1*S2';
-   
-        [eigenvec,eigenval] = eig(pinv(R1)*R2);
-
-        [~,srt]=sort(abs(diag(eigenval)),'descend');
+        R1_4 = S1*S1';  
         
-        Leig_copol = abs(eigenvec(1,srt(1))) + abs(eigenvec(2,srt(1)));
-        SLeig_copol = abs(eigenvec(1,srt(2))) + abs(eigenvec(2,srt(2)));
+        R2_4 = S1*S2';        
         
-        n1(row,col) = eigenval(srt(3),srt(3));
-        n2(row,col) = eigenval(srt(4),srt(4));
-        n3(row,col) = eigenval(srt(5),srt(5));
-        n4(row,col) = eigenval(srt(6),srt(6));
+        [eigenvec_4,eigenval_4] = eig(pinv(R1_4 + eye_w*eye(6))*R2_4);
         
-        if (Leig_copol >= SLeig_copol)
-            
-           g(row,col) = eigenval(srt(1),srt(1));
-           v(row,col) = eigenval(srt(2),srt(2));
-           
-        else    
-            
-           g(row,col) = eigenval(srt(2),srt(2));
-           v(row,col) = eigenval(srt(1),srt(1));
-           
-        end
+        for i = 1:forth_order
+            sort_ground_4(i) = (abs(eigenval_4(i,i)))*(abs(eigenvec_4(1,i))^2 + abs(eigenvec_4(2,i))^2 + abs(eigenvec_4(4,i))^2);
+            sort_vegetation_4(i) = (abs(eigenval_4(i,i)))*(abs(eigenvec_4(3,i))^2 + abs(eigenvec_4(5,i))^2 + abs(eigenvec_4(6,i))^2);
+        end       
+        
+        [~,srt_g_4] = sort(sort_ground_4,'descend');
+        [~,srt_v_4] = sort(sort_vegetation_4,'descend');
+        
+        g(row,col) = eigenval_4(srt_g_4(1),srt_g_4(1));
+        v(row,col) = eigenval_4(srt_v_4(1),srt_v_4(1));
         
     end
 end
@@ -93,14 +82,3 @@ figure(1); imagesc(0.5*angle(g)); title('4th Ord angle(g)');
 figure(2); imagesc(0.5*angle(v)); title('4th Ord angle(v)');
 figure(3); imagesc(abs(g)); title('4th Ord abs(g)');
 figure(4); imagesc(abs(v)); title('4th Ord abs(v)');
-
-%% Plotting Noise Results
-figure(5); imagesc(0.5*angle(n1)); title('4th Ord angle(n1)');
-figure(6); imagesc(0.5*angle(n2)); title('4th Ord angle(n2)');
-figure(7); imagesc(0.5*angle(n3)); title('4th Ord angle(n3)');
-figure(8); imagesc(0.5*angle(n4)); title('4th Ord angle(n4)');
-
-figure(9); imagesc(abs(n1)); title('4th Ord abs(n1)');
-figure(10); imagesc(abs(n2)); title('4th Ord abs(n2)');
-figure(11); imagesc(abs(n3)); title('4th Ord abs(n3)');
-figure(12); imagesc(abs(n4)); title('4th Ord abs(n4)');

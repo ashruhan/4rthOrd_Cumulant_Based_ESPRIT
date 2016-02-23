@@ -27,9 +27,9 @@ vegitation_mag_4=zeros(SNR_samples,1);
 vegitation_phase_2=zeros(SNR_samples,1);
 vegitation_mag_2=zeros(SNR_samples,1);
 
-% forth_order = 6;
-sort_ground_4 = zeros(2,1);
-sort_vegetation_4 = zeros(2,1);
+forth_order = 6;
+sort_ground_4 = zeros(forth_order,1);
+sort_vegetation_4 = zeros(forth_order,1);
 
 
 second_order = 3;
@@ -75,72 +75,16 @@ for SNR_sample = (1:SNR_samples);
         
         [eigenvec_4,eigenval_4] = eig(pinv(R1_4 + eye_w*eye(6))*R2_4);
         
-        [~,srtABS_4] = sort(abs(diag(eigenval_4)),'descend');
+        for i = 1:forth_order
+            sort_ground_4(i) = (abs(eigenval_4(i,i)))*(abs(eigenvec_4(1,i))^2 + abs(eigenvec_4(2,i))^2 + abs(eigenvec_4(4,i))^2);
+            sort_vegetation_4(i) = (abs(eigenval_4(i,i)))*(abs(eigenvec_4(3,i))^2 + abs(eigenvec_4(5,i))^2 + abs(eigenvec_4(6,i))^2);
+        end       
         
-        Largest_eigenvals_4 = [eigenval_4(srtABS_4(1),srtABS_4(1))
-            eigenval_4(srtABS_4(2),srtABS_4(2))
-            eigenval_4(srtABS_4(3),srtABS_4(3))];
+        [~,srt_g_4] = sort(sort_ground_4,'descend');
+        [~,srt_v_4] = sort(sort_vegetation_4,'descend');
         
-        [~,srtANGLE_4] = sort(abs(angle(Largest_eigenvals_4)),'descend');
-        
-%         abs(eigenval_4)
-%         abs(0.5*angle(eigenval_4)*180/pi)
-        
-        
-%         sort_ground_4(1) = (abs(eigenval_4(srtABS_4(srtANGLE_4(1)),srtABS_4(srtANGLE_4(1)))))....
-%             *(abs(eigenvec_4(1,srtABS_4(srtANGLE_4(1))))^2....
-%             + abs(eigenvec_4(2,srtABS_4(srtANGLE_4(1))))^2....
-%             + abs(eigenvec_4(4,srtABS_4(srtANGLE_4(1))))^2);
-%         
-%         sort_ground_4(2) = abs(eigenval_4(srtABS_4(srtANGLE_4(3)),srtABS_4(srtANGLE_4(3))))....
-%             *(abs(eigenvec_4(1,srtABS_4(srtANGLE_4(3))))^2....
-%             + abs(eigenvec_4(2,srtABS_4(srtANGLE_4(3))))^2....
-%             + abs(eigenvec_4(4,srtABS_4(srtANGLE_4(3))))^2);
-
-        sort_ground_4(1) = ....
-            abs(eigenvec_4(1,srtABS_4(srtANGLE_4(1))))^2....
-            + abs(eigenvec_4(2,srtABS_4(srtANGLE_4(1))))^2....
-            + abs(eigenvec_4(4,srtABS_4(srtANGLE_4(1))))^2;
-        
-        sort_ground_4(2) = ....
-            abs(eigenvec_4(1,srtABS_4(srtANGLE_4(3))))^2....
-            + abs(eigenvec_4(2,srtABS_4(srtANGLE_4(3))))^2....
-            + abs(eigenvec_4(4,srtABS_4(srtANGLE_4(3))))^2;
-
-
-        if sort_ground_4(1) >= sort_ground_4(2)
-            ground_phase_4(SNR_sample) = ground_phase_4(SNR_sample) + 0.5*angle(eigenval_4(srtABS_4(srtANGLE_4(1)),srtABS_4(srtANGLE_4(1))))/Averaged_samples;
-        else
-            ground_phase_4(SNR_sample) = ground_phase_4(SNR_sample) + 0.5*angle(eigenval_4(srtABS_4(srtANGLE_4(3)),srtABS_4(srtANGLE_4(3))))/Averaged_samples;
-        end
-        
-%         sort_vegetation_4(1) = (abs(eigenval_4(srtABS_4(srtANGLE_4(1)),srtABS_4(srtANGLE_4(1)))))....
-%             *(abs(eigenvec_4(3,srtABS_4(srtANGLE_4(1))))^2....
-%             + abs(eigenvec_4(5,srtABS_4(srtANGLE_4(1))))^2....
-%             + abs(eigenvec_4(6,srtABS_4(srtANGLE_4(1))))^2);
-%         
-%         sort_vegetation_4(2) = (abs(eigenval_4(srtABS_4(srtANGLE_4(3)),srtABS_4(srtANGLE_4(3)))))....
-%             *(abs(eigenvec_4(3,srtABS_4(srtANGLE_4(3))))^2....
-%             + abs(eigenvec_4(5,srtABS_4(srtANGLE_4(3))))^2....
-%             + abs(eigenvec_4(6,srtABS_4(srtANGLE_4(3))))^2);
-
-        sort_vegetation_4(1) = ....
-            abs(eigenvec_4(3,srtABS_4(srtANGLE_4(1))))^2....
-            + abs(eigenvec_4(5,srtABS_4(srtANGLE_4(1))))^2....
-            + abs(eigenvec_4(6,srtABS_4(srtANGLE_4(1))))^2;
-        
-        sort_vegetation_4(2) = ....
-            abs(eigenvec_4(3,srtABS_4(srtANGLE_4(3))))^2....
-            + abs(eigenvec_4(5,srtABS_4(srtANGLE_4(3))))^2....
-            + abs(eigenvec_4(6,srtABS_4(srtANGLE_4(3))))^2;
-
-        if sort_vegetation_4(1) >= sort_vegetation_4(2)
-            vegitation_phase_4(SNR_sample) = vegitation_phase_4(SNR_sample) + 0.5*angle(eigenval_4(srtABS_4(srtANGLE_4(1)),srtABS_4(srtANGLE_4(1))))/Averaged_samples;
-        else
-            vegitation_phase_4(SNR_sample) = vegitation_phase_4(SNR_sample) + 0.5*angle(eigenval_4(srtABS_4(srtANGLE_4(3)),srtABS_4(srtANGLE_4(3))))/Averaged_samples;
-        end     
-        
-%         %
+        ground_phase_4(SNR_sample) = ground_phase_4(SNR_sample) + 0.5*angle(eigenval_4(srt_g_4(1),srt_g_4(1)))/Averaged_samples;
+        vegitation_phase_4(SNR_sample) = vegitation_phase_4(SNR_sample) + 0.5*angle(eigenval_4(srt_v_4(1),srt_v_4(1)))/Averaged_samples;
 %         ground_phase_est_fourth(SNR_sample) = ground_phase_est_fourth(SNR_sample)...
 %             + ((ground_offset - abs(0.5*angle(eigenval_4(srt_g_4(1),srt_g_4(1)))))^2)/Averaged_samples;
         
@@ -186,7 +130,7 @@ end
 ground_phase_est_fourth_mnsqrd = sqrt(ground_phase_est_fourth)*180/pi;
 %% Plotting Results
 
-figure(2);
+figure(1);
 title('2nd and 4rth Order Modified ESPRIT Interferometric Phases');
 xlabel('SNR dB');ylabel('Int Phase (Degrees)');
 hold on;
