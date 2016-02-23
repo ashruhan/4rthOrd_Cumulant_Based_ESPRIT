@@ -14,7 +14,7 @@ ground_offset = G_O*pi/180; % ground interferomitry offset
 V_O = 50;
 vegitation_offset = V_O*pi/180;    % veg interferomitry offset
 
-Averaged_samples = 10;
+Averaged_samples = 1;
 Window = 81;    %size of window
 SNR_samples = 30;
 
@@ -30,10 +30,10 @@ vegitation_mag_2 = zeros(SNR_samples,1);
 
 SNR = zeros(1,SNR_samples);
 %% Matrix Construction
-for Averaged_sample = 1:SNR_samples;
+for SNR_sample = 1:SNR_samples;
     
-    SNR(Averaged_sample)=Averaged_sample-20;
-    Noise = (10^(-SNR(Averaged_sample)/20))/sqrt(3);
+    SNR(SNR_sample)=SNR_sample-20;
+    Noise = (10^(-SNR(SNR_sample)/20))/sqrt(3);
     
     for unusedvariable = 1:Averaged_samples
         
@@ -69,17 +69,18 @@ for Averaged_sample = 1:SNR_samples;
         
         polfilter_4 = abs(Pol_Cum_ground'*eigenvec_4);
         [~,srt_4] = sort(polfilter_4,'descend');
-        ground_phase_4(Averaged_sample) = ground_phase_4(Averaged_sample)...
+        ground_phase_4(SNR_sample) = ground_phase_4(SNR_sample)...
             + 0.5*angle(eigenval_4(srt_4(1),srt_4(1)))/Averaged_samples;
         
-        ground_mag_4(Averaged_sample) = ground_mag_4(Averaged_sample)...
+        ground_mag_4(SNR_sample) = ground_mag_4(SNR_sample)...
             + abs(eigenval_4(srt_4(1),srt_4(1)))/Averaged_samples;
         
         polfilter_4 = abs(Pol_Cum_vegitation'*eigenvec_4);
         [~,srt_4] = sort(polfilter_4,'descend');
-        vegitation_phase_4(Averaged_sample) = vegitation_phase_4(Averaged_sample)...
+        vegitation_phase_4(SNR_sample) = vegitation_phase_4(SNR_sample)...
             + 0.5*angle(eigenval_4(srt_4(1),srt_4(1)))/Averaged_samples;
-        vegitation_mag_4(Averaged_sample) = vegitation_mag_4(Averaged_sample)...
+        
+        vegitation_mag_4(SNR_sample) = vegitation_mag_4(SNR_sample)...
             + abs(eigenval_4(srt_4(1),srt_4(1)))/Averaged_samples;
         %% Second Order ESPRIT
         S1_2 = [s1_Noise(1,:)
@@ -97,16 +98,18 @@ for Averaged_sample = 1:SNR_samples;
         
         polfilter_2 = abs(Pol_ground'*eigenvec_2);
         [~,srt_2] = sort(polfilter_2,'descend');
-        ground_phase_2(Averaged_sample) = ground_phase_2(Averaged_sample)...
+        ground_phase_2(SNR_sample) = ground_phase_2(SNR_sample)...
             + angle(eigenval_2(srt_2(1),srt_2(1)))/Averaged_samples;
-        ground_mag_2(Averaged_sample) = ground_mag_2(Averaged_sample)...
+        
+        ground_mag_2(SNR_sample) = ground_mag_2(SNR_sample)...
             + abs(eigenval_2(srt_2(1),srt_2(1)))/Averaged_samples;
         
         polfilter_2 = abs(Pol_vegitation'*eigenvec_2);
         [~,srt_2] = sort(polfilter_2,'descend');
-        vegitation_phase_2(Averaged_sample) = vegitation_phase_2(Averaged_sample)...
+        vegitation_phase_2(SNR_sample) = vegitation_phase_2(SNR_sample)...
             + angle(eigenval_2(srt_2(1),srt_2(1)))/Averaged_samples;
-        vegitation_mag_2(Averaged_sample) = vegitation_mag_2(Averaged_sample)...
+        
+        vegitation_mag_2(SNR_sample) = vegitation_mag_2(SNR_sample)...
             + abs(eigenval_2(srt_2(1),srt_2(1)))/Averaged_samples;
         
     end

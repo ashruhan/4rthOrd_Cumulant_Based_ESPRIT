@@ -13,7 +13,7 @@ V_O = 25;
 vegitation_offset = V_O*pi/180;    % veg interferomitry offset
 
 
-Averaged_samples = 1000;
+Averaged_samples = 100;
 Window = 81;    %size of window
 SNR_samples = 30;
 
@@ -99,12 +99,12 @@ ground_phase_est_fourth_mnsqrd = sqrt(ground_phase_est_fourth)*180/pi;
 
 %% Plotting Results
 %load('RMS_Error10Ksamples.mat')
-figure(1);title('RMS Error (dB) Vs SNR')
+figure(1);title('RMS Error (degrees) Vs SNR')
 plot(SNR,10*log10(ground_phase_est_second_rmnsqrd),'b');
 hold on;
 plot(SNR,10*log10(ground_phase_est_fourth_mnsqrd),'black');
 hold off;
-xlabel('SNR');ylabel('RMS Error(dB)')
+xlabel('SNR');ylabel('RMS Error(degrees)')
 legend('2nd Order Error','4rth Order Error','Location','northeast');
 
 figure(2);title('RMS Error vs Coherence')
