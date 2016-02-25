@@ -3,8 +3,9 @@ clc;clear;
 %% Initializations
 
 Averaged_samples = 1;
-Window = 81;    %size of window
+Window_optimal = 81;    %size of window
 SNR_samples = 30;
+eye_optimal = 0.3737;
 
 alpha = 1; %ground weighting factor
 beta = 1;   %veg weighting factor
@@ -37,14 +38,14 @@ for Averaged_sample = 1:SNR_samples;
     
     for unusedvariable = 1:Averaged_samples
         
-        g =  Pol_ground*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
-        v =  Pol_vegitation*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
+        g =  Pol_ground*(sqrt(-2*log(1-rand(1,Window_optimal))).*exp(1i*2*pi*rand(1,Window_optimal)));
+        v =  Pol_vegitation*(sqrt(-2*log(1-rand(1,Window_optimal))).*exp(1i*2*pi*rand(1,Window_optimal)));
         
         polfilter_4 = alpha*g + beta*v;
         s2 = alpha*exp(1i*ground_offset)*g + beta*exp(1i*vegitation_offset)*v;
         
-        s1_Noise = polfilter_4 + Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
-        s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
+        s1_Noise = polfilter_4 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
+        s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
        
         %% Fourth Order ESPRIT
         S1_4=[s1_Noise(1,:).*s1_Noise(1,:)
@@ -61,10 +62,10 @@ for Averaged_sample = 1:SNR_samples;
             s2_Noise(1,:).*s2_Noise(3,:)
             s2_Noise(2,:).*s2_Noise(3,:)];
         
-        R1_4 = S1_4*S1_4'/Window;
-        R2_4 = S1_4*S2_4'/Window;
+        R1_4 = S1_4*S1_4'/Window_optimal;
+        R2_4 = S1_4*S2_4'/Window_optimal;
         
-        [eigenvec_4,eigenval_4] = eig(pinv(R1_4)*R2_4);
+        [eigenvec_4,eigenval_4] = eig(pinv(R1_4 + eye_optimal*eye(6))*R2_4);
         
         polfilter_4 = abs(Pol_ground_4'*eigenvec_4);
         [~,srt_4] = sort(polfilter_4,'descend');

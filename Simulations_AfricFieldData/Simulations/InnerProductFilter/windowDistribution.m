@@ -2,6 +2,7 @@
 clc;clear;
 %% Initializations
 alpha = 1;
+eye_optimal = 0.3737;
 
 pol_signal_one = [1;-1;0]./sqrt(2);
 pol_cum_signal_one = [1;1;0;-1;0;0]./sqrt(3); %ground
@@ -10,7 +11,7 @@ signal_one_offset = 30*pi/180;
 
 Averaged_samples = 1000;
 window_dist = 100;
-win = 1:window_dist;
+win = 10:window_dist;
 
 phase_dist_second_10 = zeros(1,window_dist);
 mag_dist_second_10 = zeros(1,window_dist);
@@ -37,7 +38,7 @@ SNR = [-10 ,0, 10];
 for SNR_sample = 1:length(SNR);
     
     Noise = (10^(-SNR(SNR_sample)/20))/sqrt(3);
-    for window = 1:window_dist
+    for window = win
         for sample = 1:Averaged_samples
             %% Random Statistics Used for Both second and forth order Algorithms
             
@@ -60,7 +61,7 @@ for SNR_sample = 1:length(SNR);
             R1_2 = S1_2*S1_2'/window;
             R2_2 = S1_2*S2_2'/window;
             
-            [eigenvect_2,eigenval_2] = eig(pinv(R1_2)*R2_2);
+            [eigenvect_2,eigenval_2] = eig(pinv(R1_2 + eye_optimal*eye(3))*R2_2);
             
             polarfilter_2 = abs(pol_signal_one'*eigenvect_2);
             [~,srt_2] = sort(polarfilter_2,'descend');
@@ -96,7 +97,7 @@ for SNR_sample = 1:length(SNR);
             R1_4 = S1_4*S1_4'/window;
             R2_4 = S1_4*S2_4'/window;
             
-            [eigenvec_4,eigenval_4] = eig(pinv(R1_4)*R2_4);
+            [eigenvec_4,eigenval_4] = eig(pinv(R1_4 + eye_optimal*eye(6))*R2_4);
             
             polarfilter_4 = abs(pol_cum_signal_one'*eigenvec_4);
             [~,srt_4] = sort(polarfilter_4,'descend');

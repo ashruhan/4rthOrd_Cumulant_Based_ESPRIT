@@ -3,15 +3,16 @@ clc;clear;
 %% Initializations
 alpha = 1;
 beta = 1;
+eye_optimal = 0.3737;
 
 Pol_ground_2 = [1;-1;0]/sqrt(2);
 Pol_ground_4 = [1;1;0;-1;0;0]/sqrt(3); %ground
 Pol_vegitation_2 = [1;1;1]/sqrt(3);
 Pol_vegitation_4 = [1;1;1;1;1;1]/sqrt(6); %vegitation
 
-G_O = 20;
+G_O = 30;
 ground_offset = G_O*pi/180; % ground interferomitry offset
-V_O = 20;
+V_O = 50;
 vegitation_offset = V_O*pi/180;    % veg interferomitry offset
 
 
@@ -55,7 +56,7 @@ for SNR_sample = 1:SNR_samples;
         R1_2 = S1_2*S1_2'/Window;
         R2_2 = S1_2*S2_2'/Window;
                 
-        [eigenvect_2,eigenval_2] = eig(pinv(R1_2)*R2_2);
+        [eigenvect_2,eigenval_2] = eig(pinv(R1_2 + eye_optimal*eye(3))*R2_2);
         
         polarfilter_2 = abs(Pol_ground_2'*eigenvect_2);
         [~,srt_2] = sort(polarfilter_2,'descend');
@@ -83,7 +84,7 @@ for SNR_sample = 1:SNR_samples;
         R1_4 = S1_4*S1_4'/Window;
         R2_4 = S1_4*S2_4'/Window;
         
-        [eigenvec_4,eigenval_4] = eig(pinv(R1_4)*R2_4);
+        [eigenvec_4,eigenval_4] = eig(pinv(R1_4 + eye_optimal*eye(6))*R2_4);
         
         polarfilter_4 = abs(Pol_ground_4'*eigenvec_4);
         [~,srt_4] = sort(polarfilter_4,'descend');

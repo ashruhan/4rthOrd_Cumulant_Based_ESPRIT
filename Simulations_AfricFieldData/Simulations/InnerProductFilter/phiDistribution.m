@@ -2,6 +2,7 @@
 clc;clear;
 %% Initializations
 alpha = 1;
+eye_optimal = 0.3737;
 
 pol_signal_one = [1;-1;0]./sqrt(2);
 pol_cum_signal_one = [1;1;0;-1;0;0]./sqrt(3); %ground
@@ -10,7 +11,7 @@ S_O = 30;
 signal_one_offset = S_O*pi/180;
 
 Averaged_samples = 1000;
-Window = 81;    %size of window
+Window_optimal = 81;    %size of window
 
 
 phase_dist_second_10 = zeros(1,Averaged_samples);
@@ -41,13 +42,13 @@ for SNR_sample = 1:length(SNR);
     for sample = 1:Averaged_samples
         %% Random Statistics Used for Both second and forth order Algorithms
         
-        signal_one =  pol_signal_one*(sqrt(-2*log(1-rand(1,Window))).*exp(1i*2*pi*rand(1,Window)));
+        signal_one =  pol_signal_one*(sqrt(-2*log(1-rand(1,Window_optimal))).*exp(1i*2*pi*rand(1,Window_optimal)));
         
         s1 = alpha*signal_one;
         s2 = alpha*exp(1i*signal_one_offset)*signal_one ;
         
-        s1_Noise = s1 + Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
-        s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window))).*exp(1i*2*pi*rand(3,Window));
+        s1_Noise = s1 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
+        s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
         %% Second order Statistics
         S1_2 = [s1_Noise(1,:)
             s1_Noise(2,:)
@@ -57,10 +58,10 @@ for SNR_sample = 1:length(SNR);
             s2_Noise(2,:)
             s2_Noise(3,:)];
         
-        R1_2 = S1_2*S1_2'/Window;
-        R2_2 = S1_2*S2_2'/Window;
+        R1_2 = S1_2*S1_2'/Window_optimal;
+        R2_2 = S1_2*S2_2'/Window_optimal;
         
-        [eigenvect_2,eigenval_2] = eig(pinv(R1_2)*R2_2);
+        [eigenvect_2,eigenval_2] = eig(pinv(R1_2 + eye_optimal*eye(3))*R2_2);
         
         polarfilter_2 = abs(pol_signal_one'*eigenvect_2);
         [~,srt_2] = sort(polarfilter_2,'descend');
@@ -93,10 +94,10 @@ for SNR_sample = 1:length(SNR);
             s2_Noise(1,:).*s2_Noise(3,:)
             s2_Noise(2,:).*s2_Noise(3,:)];
         
-        R1_4 = S1_4*S1_4'/Window;
-        R2_4 = S1_4*S2_4'/Window;
+        R1_4 = S1_4*S1_4'/Window_optimal;
+        R2_4 = S1_4*S2_4'/Window_optimal;
         
-        [eigenvec_4,eigenval_4] = eig(pinv(R1_4)*R2_4);
+        [eigenvec_4,eigenval_4] = eig(pinv(R1_4 + eye_optimal*eye(6))*R2_4);
         
         polarfilter_4 = abs(pol_cum_signal_one'*eigenvec_4);
         [~,srt_4] = sort(polarfilter_4,'descend');
