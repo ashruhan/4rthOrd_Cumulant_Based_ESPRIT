@@ -65,8 +65,8 @@ for row = r+1:ylength-r;
         [eigenvec_4,eigenval_4] = eig(pinv(R1_4 + eye_w*eye(6))*R2_4);
         
         for i = 1:forth_order
-            sort_ground_4(i) = (abs(eigenval_4(i,i)))*(abs(eigenvec_4(1,i))^2 + abs(eigenvec_4(2,i))^2 + abs(eigenvec_4(4,i))^2);
-            sort_vegetation_4(i) = (abs(eigenval_4(i,i)))*(abs(eigenvec_4(3,i))^2 + abs(eigenvec_4(5,i))^2 + abs(eigenvec_4(6,i))^2);
+            sort_ground_4(i) = (abs(eigenval_4(i,i)))^2*(abs(eigenvec_4(1,i))^2 + abs(eigenvec_4(2,i))^2 + abs(eigenvec_4(4,i))^2);
+            sort_vegetation_4(i) = (abs(eigenval_4(i,i)))^2*(abs(eigenvec_4(3,i))^2 + abs(eigenvec_4(5,i))^2 + abs(eigenvec_4(6,i))^2);
         end       
         
         [~,srt_g_4] = sort(sort_ground_4,'descend');

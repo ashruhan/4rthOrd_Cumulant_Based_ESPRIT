@@ -12,7 +12,7 @@ ground_offset = G_O*pi/180; % ground interferomitry offset
 V_O = 50;
 vegitation_offset = V_O*pi/180;    % veg interferomitry offset
 
-Averaged_samples = 100;
+Averaged_samples = 10;
 Window_optimal = 81;    %size of window
 SNR_samples = 30;
 second_order = 3;
@@ -121,7 +121,7 @@ for SNR_sample = (1:SNR_samples);
         Cumulant_1(4,1) = R1_4(4,1) - E_h1_v1*E_h1_h1 - E_h1_h1c*E_v1_h1c -  E_h1_h1c*E_v1_h1c;
         Cumulant_1(4,2) = R1_4(4,2) - E_h1_v1*E_v1_v1 - E_h1_v1c*E_v1_v1c -  E_h1_v1c*E_v1_v1c;
         Cumulant_1(4,3) = R1_4(4,3) - E_h1_v1*E_x1_x1 - E_h1_x1c*E_v1_x1c -  E_h1_x1c*E_v1_x1c;
-        Cumulant_1(4,4) = R1_4(4,4) - E_h1_v1*E_h1_v1 - E_h1_h1c*E_v1_v1c -  E_h1_v1c*E_v1_h1c;
+        Cumulant_1(4,4) = R1_4(4,4) - E_h1_v1*E_h1_v1 - E_h1_h1*E_v1_v1c  -  E_h1_v1c*E_v1_h1c;
         Cumulant_1(4,5) = R1_4(4,5) - E_h1_v1*E_h1_x1 - E_h1_h1c*E_v1_x1c -  E_h1_x1c*E_v1_h1c;
         Cumulant_1(4,6) = R1_4(4,6) - E_h1_v1*E_v1_x1 - E_h1_v1c*E_v1_x1c -  E_h1_x1c*E_v1_v1c;
         
