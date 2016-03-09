@@ -25,7 +25,6 @@ xxref = xx.ref;xxoff = xx.off;
 r = 7; c = 7;
 L = r+c+1;
 Lreshape = (r+c+1)^2;
-eye_w = 0.3737;
 g = zeros(ylength-r,xlength-c);
 v = zeros(ylength-r,xlength-c);
 
@@ -66,7 +65,7 @@ for row = r+1:ylength-r;
         
         R2_4 = S1*S2';
         
-        [eigenvec_4,eigenval_4] = eig(pinv(R1_4 + eye_w*eye(6))*R2_4);
+        [eigenvec_4,eigenval_4] = eig(pinv(R1_4)*R2_4);
 
         [~,srt_4] = sort(abs(eigenval_4),'descend');
         
@@ -79,4 +78,3 @@ for row = r+1:ylength-r;
         
     end
 end
-%% Plotting gv Results
