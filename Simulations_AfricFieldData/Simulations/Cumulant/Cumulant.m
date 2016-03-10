@@ -7,7 +7,7 @@ beta = 1;   %veg weighting factor
 Pol_ground = [1;1;0]./sqrt(2);
 Pol_vegitation = [1;1;1]./sqrt(3);
 
-eye_optimal = 0.1;
+eye_optimal = 0.01;
 G_O = 30;
 ground_offset = G_O*pi/180; % ground interferomitry offset
 V_O = 60;
@@ -514,6 +514,6 @@ plot(SNR,abs(ground_4),'bx');
 plot(SNR,abs(vegitation_4),'gx');
 plot(SNR,abs(ground_2),'bo');
 plot(SNR,abs(vegitation_2),'go');
-axis([-10,20,0,2])
+% axis([-10,20,0,2])
 legend('4rth Order Ground','2nd Order Ground','4rth Order Vegitation','2nd Order Vegitaion','Location','southeast')
 hold off

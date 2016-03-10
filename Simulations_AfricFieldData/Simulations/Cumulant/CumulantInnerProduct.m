@@ -4,8 +4,8 @@ clc;clear;
 alpha = 1; %ground weighting factor
 beta = 1;   %veg weighting factor
 
-Pol_ground = [1;-1;0]/sqrt(2);
-Pol_Cum_ground = [1;1;0;-1;0;0]/sqrt(3); %ground
+Pol_ground = [1;1;0]/sqrt(2);
+Pol_Cum_ground = [1;1;0;1;0;0]/sqrt(3); %ground
 Pol_vegitation = [1;1;1]/sqrt(3);
 Pol_Cum_vegitation = [1;1;1;1;1;1]/sqrt(6); %vegitation
 
