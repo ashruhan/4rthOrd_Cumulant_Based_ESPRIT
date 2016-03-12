@@ -59,7 +59,9 @@ for SNR_sample = 1:SNR_samples;
         [eigenvect_2,eigenval_2] = eig(pinv(R1_2 + eye_optimal*eye(3))*R2_2);
         
         polarfilter_2 = abs(Pol_ground_2'*eigenvect_2);
+        
         [~,srt_2] = sort(polarfilter_2,'descend');
+        
         ground_phase_est_second(SNR_sample) = ground_phase_est_second(SNR_sample)...
             + ((ground_offset - abs(angle(eigenval_2(srt_2(1),srt_2(1)))))^2)/Averaged_samples;
         
@@ -88,8 +90,10 @@ for SNR_sample = 1:SNR_samples;
         
         polarfilter_4 = abs(Pol_ground_4'*eigenvec_4);
         [~,srt_4] = sort(polarfilter_4,'descend');
+        
         ground_phase_est_fourth(SNR_sample) = ground_phase_est_fourth(SNR_sample)...
             + ((ground_offset - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
+        
         ground_mag_est_fourth(SNR_sample) = ground_mag_est_fourth(SNR_sample)...
             + (abs(eigenval_4(srt_4(1),srt_4(1))))/Averaged_samples;
         
