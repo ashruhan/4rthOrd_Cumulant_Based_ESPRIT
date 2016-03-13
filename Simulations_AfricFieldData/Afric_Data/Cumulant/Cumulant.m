@@ -46,6 +46,18 @@ function [ Cumulant_11,Cumulant_12 ] = Cumulant( s1_Noise,s2_Noise ,Window_optim
         E_v2_x2 = R22_2(2,3);
         E_x2_x2 = R22_2(3,3);
         
+        R22c_2 = S2_2*S2_2'/Window_optimal;
+        E_h2_h2c = R22c_2(1,1);
+        E_h2_v2c = R22c_2(1,2);
+        E_h2_x2c = R22c_2(1,3);
+        E_v2_h2c = R22c_2(2,1);
+        E_v2_v2c = R22c_2(2,2);
+        E_v2_x2c = R22c_2(2,3);
+        E_x2_h2c = R22c_2(3,1);
+        E_x2_v2c = R22c_2(3,2);
+        E_x2_x2c = R22c_2(3,3);
+                
+        
         S1_4 = [s1_Noise(1,:).*s1_Noise(1,:)
             s1_Noise(2,:).*s1_Noise(2,:)
             s1_Noise(3,:).*s1_Noise(3,:)
@@ -62,7 +74,7 @@ function [ Cumulant_11,Cumulant_12 ] = Cumulant( s1_Noise,s2_Noise ,Window_optim
         
         R11_4 = S1_4*S1_4'/Window_optimal;
         R12_4 = S1_4*S2_4'/Window_optimal;
-   
+        R22_4 = S2_4*S2_4'/Window_optimal;       
         %% Forming Cumulant One Matrix
         %% HH
         Cumulant_11(1,1) = R11_4(1,1) - E_h1_h1*conj(E_h1_h1)...
@@ -357,8 +369,6 @@ function [ Cumulant_11,Cumulant_12 ] = Cumulant( s1_Noise,s2_Noise ,Window_optim
         
         Cumulant_12(6,6) = R12_4(6,6) - E_v1_x1*conj(E_v2_x2)...
             - E_v1_v2c*E_x1_x2c...
-            - E_v1_x2c*E_x1_v2c;
-
- 
+            - E_v1_x2c*E_x1_v2c; 
 end
 

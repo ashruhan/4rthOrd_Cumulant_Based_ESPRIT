@@ -103,7 +103,8 @@ for SNR_sample = (1:SNR_samples);
         end
         
         %% Fourth Order Statistics
-        [ Cumulant_11, Cumulant_12, Cumulant_22 ] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
+        [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
+        
         [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11+eye_4*eye(6)))...
             *Cumulant_12,'nobalance');
         [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');

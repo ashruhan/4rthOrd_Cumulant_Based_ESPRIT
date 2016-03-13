@@ -42,7 +42,7 @@ for eye_sample = (1:length(eye_weight));
         s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
         
         %% Fourth Order Statistics
-        [ Cumulant_11, Cumulant_12, Cumulant_22 ] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
+        [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
         [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_weight(eye_sample)*eye(6)))...
             *Cumulant_12,'nobalance');
 
