@@ -1,9 +1,7 @@
 %% Clearing old values
 
 [x,y] = size(one_4);
-
 Lreshape = x*y;
-
 one(1:Lreshape,1) = reshape(one_4,Lreshape,1);
 two(1:Lreshape,1) = reshape(two_4,Lreshape,1);
 three(1:Lreshape,1) = reshape(three_4,Lreshape,1);

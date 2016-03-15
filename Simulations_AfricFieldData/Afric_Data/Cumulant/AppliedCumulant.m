@@ -23,14 +23,10 @@ xxref = xx.ref;xxoff = xx.off;
 
 [ylength,xlength] = size(hhoff);
 
-
-valord = 2;
-vecord = 2;
-
 halfrow = 7; halfcol = 7;
 base = halfrow+halfcol+1;
 Window_optimal = (base)^2;
-eye_4 = -0.15;
+eye_4 = -0.099;
 
 ground = zeros(ylength-halfrow,xlength-halfcol);
 vegetation = zeros(ylength-halfrow,xlength-halfcol);
@@ -71,39 +67,42 @@ for row = halfrow+1:ylength-halfrow;
         
         [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');
         
-        LeigTemp  = (abs(eigenval_4(srt_4(1),srt_4(1))))^valord....
-            *(abs(eigenvec_4(3,srt_4(1)))^vecord....
-            + abs(eigenvec_4(5,srt_4(1)))^vecord....
-            + abs(eigenvec_4(6,srt_4(1)))^vecord);
+        LeigTemp  = (abs(eigenval_4(srt_4(1),srt_4(1))))^2....
+            *(abs(eigenvec_4(1,srt_4(1)))^2....
+            + abs(eigenvec_4(2,srt_4(1)))^2....
+            + abs(eigenvec_4(4,srt_4(1)))^2);
         
-        SLeigTemp = (abs(eigenval_4(srt_4(2),srt_4(2))))^valord....
-            *(abs(eigenvec_4(3,srt_4(2)))^vecord....
-            + abs(eigenvec_4(5,srt_4(2)))^vecord....
-            + abs(eigenvec_4(6,srt_4(2)))^vecord);
+        SLeigTemp = (abs(eigenval_4(srt_4(2),srt_4(2))))^2....
+            *(abs(eigenvec_4(1,srt_4(2)))^2....
+            + abs(eigenvec_4(2,srt_4(2)))^2....
+            + abs(eigenvec_4(4,srt_4(2)))^2);
         
         if LeigTemp >= SLeigTemp
             
-            vegetation(row,col) = eigenval_4(srt_4(1),srt_4(1));
+            vegetation(row,col) = eigenval_4(srt_4(2),srt_4(2));
             
-            ground(row,col) = eigenval_4(srt_4(2),srt_4(2));
+            ground(row,col) = eigenval_4(srt_4(1),srt_4(1));
             
         else
             
-            vegetation(row,col) = eigenval_4(srt_4(2),srt_4(2));
-            ground(row,col) = eigenval_4(srt_4(1),srt_4(1));
+            vegetation(row,col) = eigenval_4(srt_4(1),srt_4(1));
+            ground(row,col) = eigenval_4(srt_4(2),srt_4(2));
         end
     end
 end
 %% Plotting gv Results
-% gndscl = size(unique(reshape(ground,size(ground,1)*size(ground,2),size(ground,3))),1);
-% vegscl = size(unique(reshape(vegetation,size(ground,1)*size(ground,2),size(ground,3))),1);
-% 
-% figure(1); imshow(0.5*angle(ground),'DisplayRange',[-pi pi],'Colormap',jet(gndscl)); title('4th Ord angle(g)');
-% figure(2); imshow(0.5*angle(vegetation),'DisplayRange',[-pi pi],'Colormap',jet(vegscl)); title('4th Ord angle(v)');
-% figure(3); imshow(sqrt(abs(ground)),'DisplayRange',[0 mean(mean(sqrt(abs(ground))))],'Colormap',jet(gndscl)); title('4th Ord abs(g)');
-% figure(4); imshow(sqrt(abs(vegetation)),'DisplayRange',[0 mean(mean(sqrt(abs(vegetation))))],'Colormap',jet(vegscl)); title('4th Ord abs(v)');
+[x,y] = size(ground);
+Lreshape = x*y;
+ground_abs_4(1:Lreshape,1) = reshape((abs(ground)),Lreshape,1);
+ground_angle_4(1:Lreshape,1) = reshape(0.5*angle(ground),Lreshape,1);
+vegetation_abs_4(1:Lreshape,1) = reshape((abs(vegetation)),Lreshape,1);
+vegetation_angle_4(1:Lreshape,1) = reshape(0.5*angle(vegetation ),Lreshape,1);
 
-figure(1); imagesc(0.5*angle(ground),[-pi pi]); title('4th Ord angle(g)');
-figure(2); imagesc(0.5*angle(vegetation),[-pi pi]); title('4th Ord angle(v)');
+figure(1); imagesc(0.5*angle(ground)); title('4th Ord angle(g)');
+figure(2); imagesc(0.5*angle(vegetation)); title('4th Ord angle(v)');
 figure(3); imagesc(sqrt(abs(ground)),[0 10]); title('4th Ord abs(g)');
 figure(4); imagesc(sqrt(abs(vegetation)),[0 10]); title('4th Ord abs(v)');
+% figure(4); hist(ground_abs_4,linspace(0,max(ground_abs_4),100));
+% figure(5); hist(ground_angle_4,linspace(-pi,pi,100));
+% figure(6); hist(vegetation_abs_4, linspace(0,max(vegetation_abs_4),100));
+% figure(7); hist(vegetation_angle_4,linspace(-pi,pi,100));

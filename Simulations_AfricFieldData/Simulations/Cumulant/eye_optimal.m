@@ -5,13 +5,14 @@ alpha = 1; %ground weighting factor
 beta = 1;   %veg weighting factor
 
 Pol_ground_2 = [1;1;0]/sqrt(2);
-
-Pol_vegitation_2 = [1;1;1]/sqrt(3);
+Pol_ground_4 = [1;1;0;1;0;0]/sqrt(3); %ground
+Pol_vegetation_2 = [1;1;1]/sqrt(3);
+Pol_vegitation_4 = [1;1;1;1;1;1]/sqrt(6); %vegitation
 
 G_O = 30;
 V_O = 50;
 ground_offset = G_O*pi/180; % ground interferomitry offset
-vegitation_offset = V_O*pi/180;    % veg interferomitry offset
+vegetation_offset = V_O*pi/180;    % veg interferomitry offset
 
 Averaged_samples = 1000;
 Window_optimal = 81;    %size of window
@@ -29,50 +30,18 @@ SNR = 10;
 Noise = (10^(-SNR/20))/sqrt(3);
 
 %% Matrix Construction
-for eye_sample = (1:length(eye_weight));   
+for eye_sample = (1:length(eye_weight));
     for unusedvariable = 1:Averaged_samples
         
         g =  Pol_ground_2*exp(1i*2*pi*rand(1,Window_optimal));
-        v =  Pol_vegitation_2*exp(1i*2*pi*rand(1,Window_optimal));
+        v =  Pol_vegetation_2*exp(1i*2*pi*rand(1,Window_optimal));
         
         s1 = alpha*g + beta*v;
-        s2 = alpha*exp(1i*ground_offset)*g + beta*exp(1i*vegitation_offset)*v;
+        s2 = alpha*exp(1i*ground_offset)*g + beta*exp(1i*vegetation_offset)*v;
         
         s1_Noise = s1 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
         s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
         
-        %% Fourth Order Statistics
-        [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
-        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_weight(eye_sample)*eye(6)))...
-            *Cumulant_12,'nobalance');
-
-        [~,srt_4] = sort(sqrt(abs(diag(eigenval_4))),'descend');
-        
-        
-        LeigTemp  = (abs(eigenval_4(srt_4(1),srt_4(1))))^2....
-            *(abs(eigenvec_4(3,srt_4(1)))^2....
-            + abs(eigenvec_4(5,srt_4(1)))^2....
-            + abs(eigenvec_4(6,srt_4(1)))^2);
-        
-        SLeigTemp = (abs(eigenval_4(srt_4(2),srt_4(2))))^2....
-            *(abs(eigenvec_4(3,srt_4(2)))^2....
-            + abs(eigenvec_4(5,srt_4(2)))^2....
-            + abs(eigenvec_4(6,srt_4(2)))^2);
-        
-        if LeigTemp >= SLeigTemp
-            vegitation_angle_4(eye_sample) = vegitation_angle_4(eye_sample)....
-                + ((vegitation_offset - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
-            
-            ground_angle_4(eye_sample) = ground_angle_4(eye_sample)....
-                + ((ground_offset - abs(0.5*angle(eigenval_4(srt_4(2),srt_4(2)))))^2)/Averaged_samples;
-        else
-            
-            vegitation_angle_4(eye_sample) = vegitation_angle_4(eye_sample)....
-                + ((vegitation_offset - abs(0.5*angle(eigenval_4(srt_4(2),srt_4(2)))))^2)/Averaged_samples;
-            
-            ground_angle_4(eye_sample) = ground_angle_4(eye_sample)....
-                + ((ground_offset - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;        
-        end 
         %% Second Order ESPRIT
         S1_2 = [s1_Noise(1,:)
             s1_Noise(2,:)
@@ -88,28 +57,29 @@ for eye_sample = (1:length(eye_weight));
         [eigenvec_2,eigenval_2] =eig((pinv(R1_2 + eye_weight(eye_sample)*eye(3)))...
             *R2_2,'nobalance');
         
-        [~,srt_2]=sort(abs(diag(eigenval_2)),'descend');
-        Leig_copol = (eigenval_2(srt_2(1),srt_2(1))^2)....
-            *abs(eigenvec_2(1,srt_2(1)))^2....
-            + abs(eigenvec_2(2,srt_2(1)))^2;
+        polfilter_2 = abs(Pol_ground_2'*eigenvec_2);
+        [~,srt_2] = sort(polfilter_2,'descend');
+        ground_angle_2(eye_sample) = ground_angle_2(eye_sample)...
+            + ((ground_offset - abs(angle(eigenval_2(srt_2(1),srt_2(1)))))^2)/Averaged_samples;
         
-        SLeig_copol = (eigenval_2(srt_2(1),srt_2(1))^2)....
-            *abs(eigenvec_2(1,srt_2(2)))^2....
-            + abs(eigenvec_2(2,srt_2(2)))^2;
-        if (Leig_copol >= SLeig_copol)         
-            ground_angle_2(eye_sample) = ground_angle_2(eye_sample)....
-                + ((ground_offset - abs(angle(eigenval_2(srt_2(1),srt_2(1)))))^2)/Averaged_samples;
-            
-            vegitation_angle_2(eye_sample) = vegitation_angle_2(eye_sample)....
-                + ((vegitation_offset - abs(angle(eigenval_2(srt_2(2),srt_2(2)))))^2)/Averaged_samples;
-            
-        else       
-            ground_angle_2(eye_sample) = ground_angle_2(eye_sample)....
-                + ((ground_offset - abs(angle(eigenval_2(srt_2(2),srt_2(2)))))^2)/Averaged_samples;
-            
-            vegitation_angle_2(eye_sample) = vegitation_angle_2(eye_sample)....
-                + ((vegitation_offset - abs(angle(eigenval_2(srt_2(1),srt_2(1)))))^2)/Averaged_samples;
-        end
+        polfilter_2 = abs(Pol_vegetation_2'*eigenvec_2);
+        [~,srt_2] = sort(polfilter_2,'descend');
+        vegitation_angle_2(eye_sample) = vegitation_angle_2(eye_sample)...
+            + ((vegetation_offset - abs(angle(eigenval_2(srt_2(1),srt_2(1)))))^2)/Averaged_samples;
+        %% Fourth Order Statistics
+        [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
+        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_weight(eye_sample)*eye(6)))...
+            *Cumulant_12,'nobalance');
+                
+        polfilter_4 = abs(Pol_ground_4'*eigenvec_4);
+        [~,srt_4] = sort(polfilter_4,'descend');
+        ground_angle_4(eye_sample) = ground_angle_4(eye_sample)...
+            + ((ground_offset - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
+        
+        polfilter_4 = abs(Pol_vegitation_4'*eigenvec_4);
+        [~,srt_4] = sort(polfilter_4,'descend');
+        vegitation_angle_4(eye_sample) = vegitation_angle_4(eye_sample)...
+            + ((vegetation_offset - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
         
     end
 end
