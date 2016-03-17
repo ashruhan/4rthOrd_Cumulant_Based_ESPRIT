@@ -72,6 +72,7 @@ for V_O_index = (1:DistLength);
             
             polfilter_2 = abs(Pol_ground'*eigenvec_2);
             [~,srt_2] = sort(polfilter_2,'descend');
+            
             ground_angle_2(V_O_index,G_O_index) = ground_angle_2(V_O_index,G_O_index)...
                 + ((ground_offset(G_O_index) - abs(angle(eigenval_2(srt_2(1),srt_2(1)))))^2)/Averaged_samples;
             

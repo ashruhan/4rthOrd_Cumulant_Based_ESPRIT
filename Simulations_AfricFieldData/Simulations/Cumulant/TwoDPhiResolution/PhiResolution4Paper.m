@@ -83,27 +83,27 @@ for V_O_index = (1:DistLength);
             if (Leig_copol >= SLeig_copol)
                 
                 ground_angle_rmse_2(V_O_index,G_O_index) =  ground_angle_rmse_2(V_O_index,G_O_index)...
-                    + ((ground_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2)/Averaged_samples;
+                    + ((ground_offset(G_O_index) - abs(angle(eigenval_2(srt_2(1),srt_2(1)))))^2)/Averaged_samples;
                 
                 
                 vegitation_angle_rmse_2(V_O_index,G_O_index) =  vegitation_angle_rmse_2(V_O_index,G_O_index)...
-                    + ((vegitation_offset + angle(eigenval_2(srt_2(2),srt_2(2))))^2)/Averaged_samples;
+                    + ((vegetation_offset(V_O_index) - abs(angle(eigenval_2(srt_2(2),srt_2(2)))))^2)/Averaged_samples;
                 
                 
                 
                 ground_abs_2(V_O_index,G_O_index) = ground_abs_2(V_O_index,G_O_index)....
                     + (abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;
                 
-                vegitation_abs_2(SNR_sample,1) = vegitation_abs_2(V_O_index,G_O_index)....
+                vegitation_abs_2(V_O_index,G_O_index) = vegitation_abs_2(V_O_index,G_O_index)....
                     + (abs(eigenval_2(srt_2(2),srt_2(2))))/Averaged_samples;
             else
                 
                 
                 ground_angle_rmse_2(V_O_index,G_O_index) =  ground_angle_rmse_2(V_O_index,G_O_index)...
-                    + ((ground_offset + angle(eigenval_2(srt_2(2),srt_2(2))))^2)/Averaged_samples;
+                    + ((ground_offset(G_O_index) - abs(angle(eigenval_2(srt_2(2),srt_2(2)))))^2)/Averaged_samples;
                 
                 vegitation_angle_rmse_2(V_O_index,G_O_index) =  vegitation_angle_rmse_2(V_O_index,G_O_index)...
-                    + ((vegitation_offset + angle(eigenval_2(srt_2(1),srt_2(1))))^2)/Averaged_samples;
+                    + ((vegetation_offset(V_O_index) - abs(angle(eigenval_2(srt_2(1),srt_2(1)))))^2)/Averaged_samples;
                 
                 
                 ground_abs_2(V_O_index,G_O_index) = ground_abs_2(V_O_index,G_O_index)....
@@ -117,23 +117,6 @@ for V_O_index = (1:DistLength);
             
             [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11+eye_4*eye(6)))...
                 *Cumulant_12,'nobalance');
-            
-            polfilter_4 = abs(Pol_Cum_ground'*eigenvec_4);
-            [~,srt_4] = sort(polfilter_4,'descend');
-            ground_angle_rmse_4(V_O_index,G_O_index) = ground_angle_rmse_4(V_O_index,G_O_index)...
-                + ((ground_offset(G_O_index) - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
-            
-            ground_abs_4(V_O_index,G_O_index) = ground_abs_4(V_O_index,G_O_index)...
-                + sqrt(abs(eigenval_4(srt_4(1),srt_4(1))))/Averaged_samples;
-            
-            polfilter_4 = abs(Pol_Cum_vegitation'*eigenvec_4);
-            [~,srt_4] = sort(polfilter_4,'descend');
-            vegitation_angle_rmse_4(V_O_index,G_O_index) = vegitation_angle_rmse_4(V_O_index,G_O_index)...
-                + ((vegetation_offset(V_O_index) - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
-            
-            vegitation_abs_4(V_O_index,G_O_index) = vegitation_abs_4(V_O_index,G_O_index)...
-                + sqrt(abs(eigenval_4(srt_4(1),srt_4(1))))/Averaged_samples;
-            
             
             [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');
             
@@ -149,29 +132,29 @@ for V_O_index = (1:DistLength);
             
             if LeigTemp >= SLeigTemp
                 
-                vegitation_angle_rmse_4(SNR_sample) =  vegitation_angle_rmse_4(SNR_sample)...
-                    + ((vegitation_offset - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
+                vegitation_angle_rmse_4(V_O_index,G_O_index) =  vegitation_angle_rmse_4(V_O_index,G_O_index)...
+                    + ((vegetation_offset(V_O_index) - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
                 
                 
-                ground_angle_rmse_4(SNR_sample) =  ground_angle_rmse_4(SNR_sample)...
-                    + ((ground_offset - abs(0.5*angle(eigenval_4(srt_4(2),srt_4(2)))))^2)/Averaged_samples;
+                ground_angle_rmse_4(V_O_index,G_O_index) =  ground_angle_rmse_4(V_O_index,G_O_index)...
+                    + ((ground_offset(G_O_index) - abs(0.5*angle(eigenval_4(srt_4(2),srt_4(2)))))^2)/Averaged_samples;
                 
                 
-                vegitation_abs_4(SNR_sample,1) = vegitation_abs_4(SNR_sample,1)....
+                vegitation_abs_4(V_O_index,G_O_index) = vegitation_abs_4(V_O_index,G_O_index)....
                     + sqrt(abs(eigenval_4(srt_4(1),srt_4(1))))/Averaged_samples;
                 
-                ground_abs_4(SNR_sample,1) = ground_abs_4(SNR_sample,1)....
+                ground_abs_4(V_O_index,G_O_index) = ground_abs_4(V_O_index,G_O_index)....
                     + sqrt(abs(eigenval_4(srt_4(2),srt_4(2))))/Averaged_samples;
                 
             else
                 
                 
                 vegitation_angle_rmse_4(V_O_index,G_O_index) =  vegitation_angle_rmse_4(V_O_index,G_O_index)...
-                    + ((vegitation_offset - abs(0.5*angle(eigenval_4(srt_4(2),srt_4(2)))))^2)/Averaged_samples;
+                    + ((vegetation_offset(V_O_index) - abs(0.5*angle(eigenval_4(srt_4(2),srt_4(2)))))^2)/Averaged_samples;
                 
                 
                 ground_angle_rmse_4(V_O_index,G_O_index) =  ground_angle_rmse_4(V_O_index,G_O_index)...
-                    + ((ground_offset - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
+                    + ((ground_offset(G_O_index) - abs(0.5*angle(eigenval_4(srt_4(1),srt_4(1)))))^2)/Averaged_samples;
                 
                 
                 vegitation_abs_4(V_O_index,G_O_index) = vegitation_abs_4(V_O_index,G_O_index)....
