@@ -93,14 +93,18 @@ vegitation_angle_2 = sqrt(vegitation_angle_2)*180/pi;
 
 figure(1);
 hold on;
-title('RMS Error 4rth Order')
+title('4rth Order RMS Error vs Eye Weight');
+xlabel('Eye Weight');ylabel('RMS Error (degrees)');
 plot(eye_weight,(ground_angle_4),'b');
 plot(eye_weight,(vegitation_angle_4),'g');
+axis([-1,1,2,15]);
 hold off
 
 figure(2);
 hold on;
-title('RMS Error 2nd Order')
+title('2nd Order RMS Error vs Eye Weight');
+xlabel('Eye Weight');ylabel('RMS Error (degrees)');
 plot(eye_weight,(ground_angle_2),'b');
 plot(eye_weight,(vegitation_angle_2),'g');
+axis([-1,1,2,15]);
 hold off;

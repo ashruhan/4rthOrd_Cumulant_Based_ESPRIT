@@ -9,9 +9,9 @@ Pol_vegitation = [1;1;1]./sqrt(3);
 
 eye_4 = -0.099;
 eye_2 = -0.022;
-G_O = 20;
+G_O = 30;
 ground_offset = G_O*pi/180; % ground interferomitry offset
-V_O = 60;
+V_O = 80;
 vegitation_offset = V_O*pi/180;    % veg interferomitry offset
 
 Averaged_samples = 1;
@@ -30,9 +30,11 @@ ground_abs_2 = zeros(SNR_samples,1);
 vegitation_abs_4 = zeros(SNR_samples,1);
 vegitation_abs_2 = zeros(SNR_samples,1);
 
+
+
 SNR = zeros(1,SNR_samples);
 %% Matrix Construction
-for SNR_sample = fliplr(1:SNR_samples);
+for SNR_sample = (1:SNR_samples);
     
     SNR(SNR_sample)=SNR_sample-10;
     Noise = (10^(-SNR(SNR_sample)/20))/sqrt(3);
@@ -68,11 +70,11 @@ for SNR_sample = fliplr(1:SNR_samples);
         
         [~,srt_2]=sort(abs(diag(eigenval_2)),'descend');
         
-        Leig_copol = (abs(eigenval_2(srt_2(1),srt_2(1)))^2)....
+        Leig_copol = (eigenval_2(srt_2(1),srt_2(1))^2)....
             *abs(eigenvec_2(1,srt_2(1)))^2....
             + abs(eigenvec_2(2,srt_2(1)))^2;
         
-        SLeig_copol = (abs(eigenval_2(srt_2(1),srt_2(1)))^2)....
+        SLeig_copol = (eigenval_2(srt_2(1),srt_2(1))^2)....
             *abs(eigenvec_2(1,srt_2(2)))^2....
             + abs(eigenvec_2(2,srt_2(2)))^2;
         
@@ -105,11 +107,13 @@ for SNR_sample = fliplr(1:SNR_samples);
         end
         
         %% Fourth Order Statistics
-        [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
-        
-        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11+eye_4*eye(6)))...
-            *Cumulant_12,'nobalance');
+       [ Cumulant_11 , Cumulant_12 ,Cumulant_22] = Cumulant( s1_Noise,s2_Noise ,Window_optimal);
+       
+       CumulantTCov = sqrt(Cumulant_11*Cumulant_22);
+       
+        [eigenvec_4,eigenval_4] = eig((pinv(CumulantTCov + eye_4*eye(6)))*Cumulant_12,'nobalance');
         [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');
+       
         
         LeigTemp  = (abs(eigenval_4(srt_4(1),srt_4(1))))^2....
             *(abs(eigenvec_4(3,srt_4(1)))^2....
@@ -161,7 +165,7 @@ plot(SNR,(ground_angle_2)*180/pi,'bo');
 plot(SNR,(vegitation_angle_2)*180/pi,'go');
 plot(SNR,-V_O*ones(1,SNR_samples),'g');
 plot(SNR,-G_O*ones(1,SNR_samples),'b');
-axis([-10,20,-V_O-5,-G_O+5])
+% axis([-10,20,-V_O-5,-G_O+5])
 legend('4rth Order Ground','4rth Order Vegetation','2nd Order Ground','2nd Order Vegetaion','Location','east')
 hold off
 %
@@ -174,5 +178,5 @@ plot(SNR,vegitation_abs_4,'gx');
 plot(SNR,ground_abs_2,'bo');
 plot(SNR,vegitation_abs_2,'go');
 % axis([-10,20,0,2])
-legend('4rth Order Ground','4rth Order Vegetation','2nd Order Ground','2nd Order Vegetaion','Location','northwest')
+legend('4rth Order Ground','4rth Order Vegetation','2nd Order Ground','2nd Order Vegetaion','Location','west')
 hold off
