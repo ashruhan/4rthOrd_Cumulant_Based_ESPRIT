@@ -1,4 +1,4 @@
-function [ Cumulant_11,Cumulant_12 ] = Cumulant( s1_Noise,s2_Noise ,Window_optimal)
+function [ Cumulant_11,Cumulant_12] = Cumulant( s1_Noise,s2_Noise ,Window_optimal)
         %% Forming the Six Arrays
         S1_2 = [s1_Noise(1,:)
             s1_Noise(2,:)
@@ -62,7 +62,7 @@ function [ Cumulant_11,Cumulant_12 ] = Cumulant( s1_Noise,s2_Noise ,Window_optim
         
         R11_4 = S1_4*S1_4'/Window_optimal;
         R12_4 = S1_4*S2_4'/Window_optimal;
-   
+
         %% Forming Cumulant One Matrix
         %% HH
         Cumulant_11(1,1) = R11_4(1,1) - E_h1_h1*conj(E_h1_h1)...

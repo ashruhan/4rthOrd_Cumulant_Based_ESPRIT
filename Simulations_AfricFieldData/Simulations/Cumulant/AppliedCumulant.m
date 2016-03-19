@@ -7,14 +7,13 @@ beta = 1;   %veg weighting factor
 Pol_ground = [1;1;0]./sqrt(2);
 Pol_vegitation = [1;1;1]./sqrt(3);
 
-eye_4 = -0.099;
-eye_2 = -0.022;
+eye_2 = 0;
 G_O = 20;
 ground_offset = G_O*pi/180; % ground interferomitry offset
 V_O = 60;
 vegitation_offset = V_O*pi/180;    % veg interferomitry offset
 
-Averaged_samples = 1;
+Averaged_samples = 100;
 Window_optimal = 81;    %size of window
 SNR_samples = 30;
 
@@ -34,7 +33,7 @@ SNR = zeros(1,SNR_samples);
 %% Matrix Construction
 for SNR_sample = fliplr(1:SNR_samples);
     
-    SNR(SNR_sample)=SNR_sample-10;
+    SNR(SNR_sample)=SNR_sample-15;
     Noise = (10^(-SNR(SNR_sample)/20))/sqrt(3);
     
     for unusedvariable = 1:Averaged_samples
@@ -88,7 +87,7 @@ for SNR_sample = fliplr(1:SNR_samples);
                 + sqrt(abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;
             
             vegitation_abs_2(SNR_sample,1) = vegitation_abs_2(SNR_sample,1)....
-                + sqrt(abs(eigenval_2(srt_2(2),srt_2(2))))/Averaged_samples;            
+                + sqrt(abs(eigenval_2(srt_2(2),srt_2(2))))/Averaged_samples;
         else
             
             ground_angle_2(SNR_sample,1) = ground_angle_2(SNR_sample,1)....
@@ -101,14 +100,22 @@ for SNR_sample = fliplr(1:SNR_samples);
                 + sqrt(abs(eigenval_2(srt_2(2),srt_2(2))))/Averaged_samples;
             
             vegitation_abs_2(SNR_sample,1) = vegitation_abs_2(SNR_sample,1)....
-                + sqrt(abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;            
+                + sqrt(abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;
         end
         
         %% Fourth Order Statistics
+        clc;
         [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
         
-        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11+eye_4*eye(6)))...
+        [~,eigenvalCov11_4] = eig(Cumulant_11,'nobalance');
+        
+        [~,srtCov_4] = sort(abs(diag(eigenvalCov11_4)),'descend');
+                
+        eye_4 = mean(diag(eigenvalCov11_4))/max(abs(diag(eigenvalCov11_4)))^2;
+        
+        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_4*eye(6)))...
             *Cumulant_12,'nobalance');
+
         [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');
         
         LeigTemp  = (abs(eigenval_4(srt_4(1),srt_4(1))))^2....
@@ -151,8 +158,8 @@ for SNR_sample = fliplr(1:SNR_samples);
     end
 end
 %% Plotting Results
-figure(1);
-title('2nd and 4rth Order Modified ESPRIT Interferometric Phases');
+figure(2);
+title('2nd and 4rth Order ESPRIT Interferometric Phases');
 xlabel('SNR dB');ylabel('Int Phase (Degrees)');
 hold on;
 plot(SNR,(ground_angle_4)*180/pi,'bx');
@@ -161,11 +168,11 @@ plot(SNR,(ground_angle_2)*180/pi,'bo');
 plot(SNR,(vegitation_angle_2)*180/pi,'go');
 plot(SNR,-V_O*ones(1,SNR_samples),'g');
 plot(SNR,-G_O*ones(1,SNR_samples),'b');
-axis([-10,20,-V_O-5,-G_O+5])
+% axis([-10,20,-V_O-5,-G_O+5])
 legend('4rth Order Ground','4rth Order Vegetation','2nd Order Ground','2nd Order Vegetaion','Location','east')
 hold off
 %
-figure(2);
+figure(3);
 title('2nd and 4rth Order ESPRIT Coherance');
 xlabel('SNR dB');ylabel('Magnitude');
 hold on;

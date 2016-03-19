@@ -10,8 +10,7 @@ Pol_vegitation = [1;1;1]/sqrt(3);
 Pol_Cum_vegitation = [1;1;1;1;1;1]/sqrt(6); %vegitation
 
 
-eye_4 = -0.099;
-eye_2 = -0.022;
+eye_2 = 0;
 G_O = 20;
 ground_offset = G_O*pi/180; % ground interferomitry offset
 V_O = 60;
@@ -75,7 +74,16 @@ for window = Window;
         
         %% Fourth Order Statistics
         [ Cumulant_11, Cumulant_12 ] = Cumulant( s1_Noise ,s2_Noise,window);
-        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11+eye_4*eye(6)))...
+       [~,eigenvalCov_4] = eig(Cumulant_11,'nobalance');
+
+        eye_4 = (1/(6^2))*sqrt(((eigenvalCov_4(1,1) - 1)^2)....
+            +((eigenvalCov_4(2,2) - 1)^2)....
+            +((eigenvalCov_4(3,3) - 1)^2)....
+            +((eigenvalCov_4(4,4) - 1)^2)....
+            +((eigenvalCov_4(5,5) - 1)^2)....
+            +((eigenvalCov_4(6,6) - 1)^2));
+        
+        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 - eye_4*eye(6)))...
             *Cumulant_12,'nobalance');
 
         

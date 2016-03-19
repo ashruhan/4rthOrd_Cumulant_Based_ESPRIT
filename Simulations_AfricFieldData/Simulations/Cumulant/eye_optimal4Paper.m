@@ -26,7 +26,7 @@ ground_angle_2 = zeros(eye_distribution,1);
 vegitation_angle_4 = zeros(eye_distribution,1);
 vegitation_angle_2 = zeros(eye_distribution,1);
 
-SNR = 10;
+SNR = 5;
 Noise = (10^(-SNR/20))/sqrt(3);
 
 %% Matrix Construction

@@ -9,8 +9,7 @@ Pol_Cum_ground = [1;1;0;1;0;0]/sqrt(3); %ground
 Pol_vegitation = [1;1;1]/sqrt(3);
 Pol_Cum_vegitation = [1;1;1;1;1;1]/sqrt(6); %vegitation
 
-eye_4 = -0.099;
-eye_2 = -0.022;
+eye_2 = 0;
 
 DistLength = 150;
 
@@ -90,7 +89,16 @@ for V_O_index = (1:DistLength);
             %% Fourth Order Statistics
             [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
             
-            [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11+eye_4*eye(6)))...
+            [~,eigenvalCov_4] = eig(Cumulant_11,'nobalance');
+            
+            eye_4 = (1/(6^2))*sqrt(((eigenvalCov_4(1,1) - 1)^2)....
+                +((eigenvalCov_4(2,2) - 1)^2)....
+                +((eigenvalCov_4(3,3) - 1)^2)....
+                +((eigenvalCov_4(4,4) - 1)^2)....
+                +((eigenvalCov_4(5,5) - 1)^2)....
+                +((eigenvalCov_4(6,6) - 1)^2));
+            
+            [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 - eye_4*eye(6)))...
                 *Cumulant_12,'nobalance');
             
             polfilter_4 = abs(Pol_Cum_ground'*eigenvec_4);
