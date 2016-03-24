@@ -13,7 +13,7 @@ ground_offset = G_O*pi/180; % ground interferomitry offset
 V_O = 60;
 vegitation_offset = V_O*pi/180;    % veg interferomitry offset
 
-Averaged_samples = 100;
+Averaged_samples = 20;
 Window_optimal = 81;    %size of window
 SNR_samples = 30;
 
@@ -107,11 +107,9 @@ for SNR_sample = fliplr(1:SNR_samples);
         clc;
         [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
         
-        [~,eigenvalCov11_4] = eig(Cumulant_11,'nobalance');
-        
-        [~,srtCov_4] = sort(abs(diag(eigenvalCov11_4)),'descend');
-                
-        eye_4 = mean(diag(eigenvalCov11_4))/max(abs(diag(eigenvalCov11_4)))^2;
+        [~,eigenvalCov_4] = eig(Cumulant_11,'nobalance');
+       
+        eye_4 = mean(diag(eigenvalCov_4))/max(abs(diag(eigenvalCov_4)))^2;
         
         [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_4*eye(6)))...
             *Cumulant_12,'nobalance');
@@ -160,21 +158,21 @@ end
 %% Plotting Results
 figure(2);
 title('2nd and 4rth Order ESPRIT Interferometric Phases');
-xlabel('SNR dB');ylabel('Int Phase (Degrees)');
+xlabel('SNR (dB)');ylabel('Int Phase (degrees)');
 hold on;
-plot(SNR,(ground_angle_4)*180/pi,'bx');
-plot(SNR,(vegitation_angle_4)*180/pi,'gx');
-plot(SNR,(ground_angle_2)*180/pi,'bo');
-plot(SNR,(vegitation_angle_2)*180/pi,'go');
-plot(SNR,-V_O*ones(1,SNR_samples),'g');
-plot(SNR,-G_O*ones(1,SNR_samples),'b');
+plot(SNR,(-ground_angle_4)*180/pi,'bx');
+plot(SNR,(-vegitation_angle_4)*180/pi,'gx');
+plot(SNR,(-ground_angle_2)*180/pi,'bo');
+plot(SNR,(-vegitation_angle_2)*180/pi,'go');
+plot(SNR,V_O*ones(1,SNR_samples),'g');
+plot(SNR,G_O*ones(1,SNR_samples),'b');
 % axis([-10,20,-V_O-5,-G_O+5])
 legend('4rth Order Ground','4rth Order Vegetation','2nd Order Ground','2nd Order Vegetaion','Location','east')
 hold off
 %
 figure(3);
 title('2nd and 4rth Order ESPRIT Coherance');
-xlabel('SNR dB');ylabel('Magnitude');
+xlabel('SNR (dB)');ylabel('Magnitude');
 hold on;
 plot(SNR,ground_abs_4,'bx');
 plot(SNR,vegitation_abs_4,'gx');

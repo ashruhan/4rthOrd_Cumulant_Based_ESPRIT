@@ -116,14 +116,9 @@ for V_O_index = (1:DistLength);
             
             [~,eigenvalCov_4] = eig(Cumulant_11,'nobalance');
             
-            eye_4 = (1/(6^2))*sqrt(((eigenvalCov_4(1,1) - 1)^2)....
-                +((eigenvalCov_4(2,2) - 1)^2)....
-                +((eigenvalCov_4(3,3) - 1)^2)....
-                +((eigenvalCov_4(4,4) - 1)^2)....
-                +((eigenvalCov_4(5,5) - 1)^2)....
-                +((eigenvalCov_4(6,6) - 1)^2));
+            eye_4 = mean(diag(eigenvalCov_4))/max(abs(diag(eigenvalCov_4)))^2;
             
-            [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 - eye_4*eye(6)))...
+            [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_4*eye(6)))...
                 *Cumulant_12,'nobalance');
             
             [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');
@@ -195,11 +190,11 @@ figure(5)
 mesh(ground_abs_4);title('4th order ground coherance');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(6)
-mesh(vegitation_abs_4);title('4th order vegetation coherance');
+meshc(vegitation_abs_4);title('4th order vegetation coherance');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(7)
-mesh(ground_abs_2);title('2nd order ground coherance');
+meshc(ground_abs_2);title('2nd order ground coherance');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(8)
-mesh(vegitation_abs_2);title('2nd order vegetation coherance');
+meshc(vegitation_abs_2);title('2nd order vegetation coherance');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');

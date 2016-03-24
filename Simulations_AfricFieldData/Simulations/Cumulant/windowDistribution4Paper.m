@@ -74,16 +74,12 @@ for window = Window;
         
         %% Fourth Order Statistics
         [ Cumulant_11, Cumulant_12 ] = Cumulant( s1_Noise ,s2_Noise,window);
-       [~,eigenvalCov_4] = eig(Cumulant_11,'nobalance');
 
-        eye_4 = (1/(6^2))*sqrt(((eigenvalCov_4(1,1) - 1)^2)....
-            +((eigenvalCov_4(2,2) - 1)^2)....
-            +((eigenvalCov_4(3,3) - 1)^2)....
-            +((eigenvalCov_4(4,4) - 1)^2)....
-            +((eigenvalCov_4(5,5) - 1)^2)....
-            +((eigenvalCov_4(6,6) - 1)^2));
+        [~,eigenvalCov_4] = eig(Cumulant_11,'nobalance');
+       
+        eye_4 = mean(diag(eigenvalCov_4))/max(abs(diag(eigenvalCov_4)))^2;
         
-        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 - eye_4*eye(6)))...
+        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_4*eye(6)))...
             *Cumulant_12,'nobalance');
 
         
@@ -113,18 +109,18 @@ vegitation_angle_rmse_4 = sqrt(vegitation_angle_rmse_4)*180/pi;
 
 figure(1);
 title('4rth Order ESPRIT RMS Error vs Window Distribution');
-xlabel('SNR dB');ylabel('RMS Error (Degrees)');
+xlabel('Window Size');ylabel('RMS Error (degrees)');
 hold on;
 plot(Window,(ground_angle_rmse_4),'b');
 plot(Window,(vegitation_angle_rmse_4),'g');
-legend('2nd Order Ground','2nd Order Vegetaion','Location','northeast')
+legend('4rth Order Ground','4rth Order Vegetaion','Location','northeast')
 hold off
 
 figure(2)
 title('2nd Order ESPRIT RMS Error vs Window Distribution');
-xlabel('SNR dB');ylabel('RMS Error (Degrees)');
+xlabel('Window Size');ylabel('RMS Error (degrees)');
 hold on;
 plot(Window,(ground_angle_rmse_2),'b');
 plot(Window,(vegitation_angle_rmse_2),'g');
-legend('4rth Order Ground','4rth Order Vegetation','Location','northeast')
+legend('2nd Order Ground','2nd Order Vegetation','Location','northeast')
 hold off
