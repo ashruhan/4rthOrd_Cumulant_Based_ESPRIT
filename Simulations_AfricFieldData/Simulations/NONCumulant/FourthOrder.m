@@ -38,18 +38,16 @@ for SNR_sample = fliplr(1:SNR_samples);
     
     for unusedvariable = 1:Averaged_samples
         
-        %% Matrix Construction
-        
-        g =  Pol_ground*exp(1i*2*pi*rand(1,Window_optimal));
-        v =  Pol_vegitation*exp(1i*2*pi*rand(1,Window_optimal));
+        %% Signal Construction
+
+        g =  Pol_ground*(sqrt(-2*log(1-rand(1,Window_optimal))).*exp(1i*2*pi*rand(1,Window_optimal)));
+        v =  Pol_vegitation*(sqrt(-2*log(1-rand(1,Window_optimal))).*exp(1i*2*pi*rand(1,Window_optimal)));
         
         s1 = alpha*g + beta*v;
         s2 = alpha*exp(1i*ground_offset)*g + beta*exp(1i*vegitation_offset)*v;
         
         s1_Noise = s1 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
         s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
-        
-        %% Second Order Stats
         
         S1_2 = [s1_Noise(1,:)
             s1_Noise(2,:)
@@ -59,8 +57,26 @@ for SNR_sample = fliplr(1:SNR_samples);
             s2_Noise(2,:)
             s2_Noise(3,:)];
         
+        S1_4 = [s1_Noise(1,:).*s1_Noise(1,:)
+            s1_Noise(2,:).*s1_Noise(2,:)
+            s1_Noise(3,:).*s1_Noise(3,:)
+            s1_Noise(1,:).*s1_Noise(2,:)
+            s1_Noise(1,:).*s1_Noise(3,:)
+            s1_Noise(2,:).*s1_Noise(3,:)];
+        
+        S2_4 = [s2_Noise(1,:).*s2_Noise(1,:)
+            s2_Noise(2,:).*s2_Noise(2,:)
+            s2_Noise(3,:).*s2_Noise(3,:)
+            s2_Noise(1,:).*s2_Noise(2,:)
+            s2_Noise(1,:).*s2_Noise(3,:)
+            s2_Noise(2,:).*s2_Noise(3,:)];
+        
+        R1_4 = S1_4*S1_4'/Window_optimal;
+        R2_4 = S1_4*S2_4'/Window_optimal;
+        
         R1_2 = S1_2*S1_2'/Window_optimal;
         R2_2 = S1_2*S2_2'/Window_optimal;
+        %% Second Order Stat Analysis
         
         [eigenvec_2,eigenval_2] =eig((pinv(R1_2 + eye_2*eye(3)))...
             *R2_2,'nobalance');
@@ -105,60 +121,75 @@ for SNR_sample = fliplr(1:SNR_samples);
         
         %% Fourth Order Statistics
         clc;
-        [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
-        
-        [~,eigenvalCov11_4] = eig(Cumulant_11,'nobalance');
+        [~,eigenvalCov11_4] = eig(R1_4,'nobalance');
         
         [~,srtCov_4] = sort(abs(diag(eigenvalCov11_4)),'descend');
-                
-        eye_4 = mean(diag(eigenvalCov11_4))/max(abs(diag(eigenvalCov11_4)))^2;
         
-        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_4*eye(6)))...
-            *Cumulant_12,'nobalance');
-
-        [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');
+        eye_4 = mean((diag(eigenvalCov11_4)))/max(abs(diag(eigenvalCov11_4)))^2;
         
-        LeigTemp  = (abs(eigenval_4(srt_4(1),srt_4(1))))^2....
-            *(abs(eigenvec_4(3,srt_4(1)))^2....
-            + abs(eigenvec_4(5,srt_4(1)))^2....
-            + abs(eigenvec_4(6,srt_4(1)))^2);
+        [eigenvec_4,eigenval_4] = eig((pinv(R1_4 + eye_4*eye(6)))*R2_4,'nobalance');
         
-        SLeigTemp = (abs(eigenval_4(srt_4(2),srt_4(2))))^2....
-            *(abs(eigenvec_4(3,srt_4(2)))^2....
-            + abs(eigenvec_4(5,srt_4(2)))^2....
-            + abs(eigenvec_4(6,srt_4(2)))^2);
+        [~,srt_abs_4] = sort(abs(diag(eigenval_4)),'descend');
         
-        if LeigTemp >= SLeigTemp
-            vegitation_angle_4(SNR_sample,1) = vegitation_angle_4(SNR_sample,1)....
-                + 0.5*angle(eigenval_4(srt_4(1),srt_4(1)))/Averaged_samples;
-            
-            ground_angle_4(SNR_sample,1) = ground_angle_4(SNR_sample,1)....
-                + 0.5*angle(eigenval_4(srt_4(2),srt_4(2)))/Averaged_samples;
-            
-            vegitation_abs_4(SNR_sample,1) = vegitation_abs_4(SNR_sample,1)....
-                + sqrt(abs(eigenval_4(srt_4(1),srt_4(1))))/Averaged_samples;
-            
-            ground_abs_4(SNR_sample,1) = ground_abs_4(SNR_sample,1)....
-                + sqrt(abs(eigenval_4(srt_4(2),srt_4(2))))/Averaged_samples;
-            
-        else
+        [~,srt_angle_4] = sort(abs(angle(diag(eigenval_4(srt_abs_4(1:3),srt_abs_4(1:3))))),'descend');
+        
+        LeigTemp  = (abs(eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)))))^2....
+            *(abs(eigenvec_4(1,srt_abs_4(srt_angle_4(1))))^2....
+            + abs(eigenvec_4(2,(srt_angle_4(1))))^2....
+            + abs(eigenvec_4(4,srt_abs_4(srt_angle_4(1))))^2);
+        
+        SLeigTemp = (abs(eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)))))^2....
+            *(abs(eigenvec_4(1,srt_abs_4(srt_angle_4(3))))^2....
+            + abs(eigenvec_4(2,srt_abs_4(srt_angle_4(3))))^2....
+            + abs(eigenvec_4(4,srt_abs_4(srt_angle_4(3))))^2);
+        
+        if ((LeigTemp >= SLeigTemp)&&(abs(eigenvec_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1))))...
+                >= abs(eigenvec_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3))))) )
             
             vegitation_angle_4(SNR_sample,1) = vegitation_angle_4(SNR_sample,1)....
-                + 0.5*angle(eigenval_4(srt_4(2),srt_4(2)))/Averaged_samples;
+                + 0.5*angle(eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3))))/Averaged_samples;
             
             ground_angle_4(SNR_sample,1) = ground_angle_4(SNR_sample,1)....
-                + 0.5*angle(eigenval_4(srt_4(1),srt_4(1)))/Averaged_samples;
+                + 0.5*angle(eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1))))/Averaged_samples;
             
             vegitation_abs_4(SNR_sample,1) = vegitation_abs_4(SNR_sample,1)....
-                + sqrt(abs(eigenval_4(srt_4(2),srt_4(2))))/Averaged_samples;
+                + sqrt(abs(eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)))))/Averaged_samples;
             
             ground_abs_4(SNR_sample,1) = ground_abs_4(SNR_sample,1)....
-                + sqrt(abs(eigenval_4(srt_4(1),srt_4(1))))/Averaged_samples;
+                + sqrt(abs(eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)))))/Averaged_samples;
+            
+        elseif((LeigTemp >= SLeigTemp)&&(abs(eigenvec_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3))))...
+                >= abs(eigenvec_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1))))) )
+            
+            vegitation_angle_4(SNR_sample,1) = vegitation_angle_4(SNR_sample,1)....
+                + 0.5*angle(eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1))))/Averaged_samples;
+            
+            ground_angle_4(SNR_sample,1) = ground_angle_4(SNR_sample,1)....
+                + 0.5*angle(eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3))))/Averaged_samples;
+            
+            vegitation_abs_4(SNR_sample,1) = vegitation_abs_4(SNR_sample,1)....
+                + sqrt(abs(eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)))))/Averaged_samples;
+            
+            ground_abs_4(SNR_sample,1) = ground_abs_4(SNR_sample,1)....
+                + sqrt(abs(eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)))))/Averaged_samples;
+        elseif (SLeigTemp >= LeigTemp)
+            
+            vegitation_angle_4(SNR_sample,1) = vegitation_angle_4(SNR_sample,1)....
+                + 0.5*angle(eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1))))/Averaged_samples;
+            
+            ground_angle_4(SNR_sample,1) = ground_angle_4(SNR_sample,1)....
+                + 0.5*angle(eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3))))/Averaged_samples;
+            
+            vegitation_abs_4(SNR_sample,1) = vegitation_abs_4(SNR_sample,1)....
+                + sqrt(abs(eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)))))/Averaged_samples;
+            
+            ground_abs_4(SNR_sample,1) = ground_abs_4(SNR_sample,1)....
+                + sqrt(abs(eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)))))/Averaged_samples;
         end
     end
 end
 %% Plotting Results
-figure(5);
+figure(2);
 title('2nd and 4rth Order ESPRIT Interferometric Phases');
 xlabel('SNR dB');ylabel('Int Phase (Degrees)');
 hold on;
@@ -172,7 +203,7 @@ plot(SNR,-G_O*ones(1,SNR_samples),'b');
 legend('4rth Order Ground','4rth Order Vegetation','2nd Order Ground','2nd Order Vegetaion','Location','east')
 hold off
 %
-figure(6);
+figure(3);
 title('2nd and 4rth Order ESPRIT Coherance');
 xlabel('SNR dB');ylabel('Magnitude');
 hold on;

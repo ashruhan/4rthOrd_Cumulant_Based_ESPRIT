@@ -49,7 +49,12 @@ for SNR_sample = fliplr(1:SNR_samples);
         s1_Noise = s1 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
         s2_Noise = s2 + Noise*sqrt(-2*log(1-rand(3,Window_optimal))).*exp(1i*2*pi*rand(3,Window_optimal));
         
-        %% Second Order Stats
+        index=[1 1
+            2 2
+            3 3
+            1 2
+            1 3
+            2 3];
         
         S1_2 = [s1_Noise(1,:)
             s1_Noise(2,:)
@@ -59,8 +64,43 @@ for SNR_sample = fliplr(1:SNR_samples);
             s2_Noise(2,:)
             s2_Noise(3,:)];
         
+        S1_4 = [s1_Noise(1,:).*s1_Noise(1,:)
+            s1_Noise(2,:).*s1_Noise(2,:)
+            s1_Noise(3,:).*s1_Noise(3,:)
+            s1_Noise(1,:).*s1_Noise(2,:)
+            s1_Noise(1,:).*s1_Noise(3,:)
+            s1_Noise(2,:).*s1_Noise(3,:)];
+        
+        S2_4 = [s2_Noise(1,:).*s2_Noise(1,:)
+            s2_Noise(2,:).*s2_Noise(2,:)
+            s2_Noise(3,:).*s2_Noise(3,:)
+            s2_Noise(1,:).*s2_Noise(2,:)
+            s2_Noise(1,:).*s2_Noise(3,:)
+            s2_Noise(2,:).*s2_Noise(3,:)];
+        
+        R1_4 = S1_4*S1_4'/Window_optimal;
+        R2_4 = S1_4*S2_4'/Window_optimal;
+        
         R1_2 = S1_2*S1_2'/Window_optimal;
         R2_2 = S1_2*S2_2'/Window_optimal;
+        
+        R10_2 = S1_2*S1_2.'/Window_optimal;
+        R20_2 = S2_2*S2_2.'/Window_optimal;
+        
+        for m = 1:6
+            for n = 1:6
+                
+                R1_4(m,n)= R1_4(m,n) - R10_2(index(m,1),index(m,2))*R10_2(index(n,1),index(n,2))...
+                    - R1_2(index(m,1),index(n,1))*R1_2(index(m,2),index(n,2))...
+                    - R1_2(index(m,1),index(n,2))*R1_2(index(m,2),index(n,1));
+                
+                R2_4(m,n)= R2_4(m,n) - R10_2(index(m,1),index(m,2))*R20_2(index(n,1),index(n,2))...
+                    - R2_2(index(m,1),index(n,1))*R2_2(index(m,2),index(n,2))...
+                    - R2_2(index(m,1),index(n,2))*R2_2(index(m,2),index(n,1));
+                
+            end
+        end
+        %% Second Order Stats
         
         [eigenvec_2,eigenval_2] =eig((pinv(R1_2 + eye_2*eye(3)))...
             *R2_2,'nobalance');
@@ -103,19 +143,16 @@ for SNR_sample = fliplr(1:SNR_samples);
                 + sqrt(abs(eigenval_2(srt_2(1),srt_2(1))))/Averaged_samples;
         end
         
-        %% Fourth Order Statistics
-        clc;
-        [ Cumulant_11, Cumulant_12] = Cumulant( s1_Noise ,s2_Noise,Window_optimal );
-        
-        [~,eigenvalCov11_4] = eig(Cumulant_11,'nobalance');
+        %% Fourth Order Statistics        
+        [~,eigenvalCov11_4] = eig(R1_4,'nobalance');
         
         [~,srtCov_4] = sort(abs(diag(eigenvalCov11_4)),'descend');
-                
-        eye_4 = mean(diag(eigenvalCov11_4))/max(abs(diag(eigenvalCov11_4)))^2;
         
-        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_4*eye(6)))...
-            *Cumulant_12,'nobalance');
-
+        eye_4 = mean((diag(eigenvalCov11_4)))/max(abs(diag(eigenvalCov11_4)))^2
+        
+        [eigenvec_4,eigenval_4] = eig((pinv(R1_4 + eye_4*eye(6)))...
+            *R2_4,'nobalance');
+        
         [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');
         
         LeigTemp  = (abs(eigenval_4(srt_4(1),srt_4(1))))^2....
@@ -158,7 +195,7 @@ for SNR_sample = fliplr(1:SNR_samples);
     end
 end
 %% Plotting Results
-figure(5);
+figure(2);
 title('2nd and 4rth Order ESPRIT Interferometric Phases');
 xlabel('SNR dB');ylabel('Int Phase (Degrees)');
 hold on;
@@ -172,7 +209,7 @@ plot(SNR,-G_O*ones(1,SNR_samples),'b');
 legend('4rth Order Ground','4rth Order Vegetation','2nd Order Ground','2nd Order Vegetaion','Location','east')
 hold off
 %
-figure(6);
+figure(3);
 title('2nd and 4rth Order ESPRIT Coherance');
 xlabel('SNR dB');ylabel('Magnitude');
 hold on;

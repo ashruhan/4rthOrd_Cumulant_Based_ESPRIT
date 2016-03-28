@@ -21,64 +21,53 @@ hhref = hh.ref;hhoff = hh.off;
 vvref = vv.ref;vvoff = vv.off;
 xxref = xx.ref;xxoff = xx.off;
 
-Pol_second_ground = [1;1;0];
-Pol_second_ground = Pol_second_ground / norm(Pol_second_ground);
-Pol_second_vegitation = [1;1;1];
-Pol_second_vegitation = Pol_second_vegitation / norm(Pol_second_vegitation);
-
-% Pol_fourth_ground = [1;1;0;-1;0;0;]; %ground
-% Pol_fourth_vegitation = [1;1;1;-1;1;1;]; %vegitation
-
 r = 7; c = 7;
 L = r+c+1;
 Lreshape = (r+c+1)^2;
 [ylength,xlength] = size(hhoff);
-g = zeros(ylength-r,xlength-c);
-v = zeros(ylength-r,xlength-c);
-n = zeros(ylength-r,xlength-c);
+ground_2 = zeros(ylength-r,xlength-c);
+vegetation_2 = zeros(ylength-r,xlength-c);
 %% Espirit Martix Calculations
 %%%%%%%%%%%%%%%%%%%%%Pull rand line%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for row = fliplr(r+1:ylength-r);
     for col = c+1:xlength-c;
         
         Var = hhref(row-r:row+r,col-c:col+c);
-        s1(1,1:Lreshape) = reshape(Var,1,Lreshape);
+        S1(1,1:Lreshape) = reshape(Var,1,Lreshape);
         
         Var = hhoff(row-r:row+r,col-c:col+c);
-        s2(1,1:Lreshape) = reshape(Var,1,Lreshape);
+        S2(1,1:Lreshape) = reshape(Var,1,Lreshape);
         
         Var = vvref(row-r:row+r,col-c:col+c);
-        s1(2,1:Lreshape) = reshape(Var,1,Lreshape);
+        S1(2,1:Lreshape) = reshape(Var,1,Lreshape);
         
         Var = vvoff(row-r:row+r,col-c:col+c);
-        s2(2,1:Lreshape) = reshape(Var,1,Lreshape);
+        S2(2,1:Lreshape) = reshape(Var,1,Lreshape);
         
         Var = xxref(row-r:row+r,col-c:col+c);
-        s1(3,1:Lreshape) = reshape(Var,1,Lreshape);
+        S1(3,1:Lreshape) = reshape(Var,1,Lreshape);
         
         Var = xxoff(row-r:row+r,col-c:col+c);
-        s2(3,1:Lreshape) = reshape(Var,1,Lreshape);
+        S2(3,1:Lreshape) = reshape(Var,1,Lreshape);
         
-        R1 = s1*s1';  R2 = s1*s2';
+        R1 = S1*S1';  R2 = S1*S2';
         
         [eigenvec,eigenval] = eig(pinv(R1)*R2);
         
-        [~,srt]=sort(abs(diag(eigenval)),'descend');
+        [~,srt_2]=sort(abs(diag(eigenval)),'descend');
         
-        Leig_copol = abs(eigenvec(1,srt(1)))^2 + abs(eigenvec(2,srt(1)))^2;
-        SLeig_copol = abs(eigenvec(1,srt(2)))^2 + abs(eigenvec(2,srt(2)))^2;
-        
-        n(row,col) = eigenval(srt(3),srt(3));
-        
+        Leig_copol = abs(eigenvec(1,srt_2(1)))^2 + abs(eigenvec(2,srt_2(1)))^2;
+        SLeig_copol = abs(eigenvec(1,srt_2(2)))^2 + abs(eigenvec(2,srt_2(2)))^2;
+                
         if (Leig_copol >= SLeig_copol)
             
-           g(row,col) = eigenval(srt(1),srt(1));
-           v(row,col) = eigenval(srt(2),srt(2));
+           ground_2(row,col) = eigenval(srt_2(1),srt_2(1));
+           vegetation_2(row,col) = eigenval(srt_2(2),srt_2(2));
            
         else    
             
-           g(row,col) = eigenval(srt(2),srt(2));
-           v(row,col) = eigenval(srt(1),srt(1));
+           ground_2(row,col) = eigenval(srt_2(2),srt_2(2));
+           vegetation_2(row,col) = eigenval(srt_2(1),srt_2(1));
            
         end
         
@@ -86,9 +75,7 @@ for row = fliplr(r+1:ylength-r);
 end
 
 %% Plotting Results
-figure(21); imagesc(angle(g)); title('2nd Ord angle(g)');
-figure(22); imagesc(angle(v)); title('2nd Ord angle(v)');
-figure(23); imagesc(angle(n)); title('2nd Ord angle(n)');
-figure(24); imagesc(abs(g)); title('2nd Ord abs(g)');
-figure(25); imagesc(abs(v)); title('2nd Ord abs(v)');
-figure(26); imagesc(abs(n)); title('2nd Ord abs(n)');
+figure(21); imagesc(angle(ground_2)); title('2nd Ord angle(g)');
+figure(22); imagesc(angle(vegetation_2)); title('2nd Ord angle(v)');
+figure(24); imagesc(abs(ground_2)); title('2nd Ord abs(g)');
+figure(25); imagesc(abs(vegetation_2)); title('2nd Ord abs(v)');
