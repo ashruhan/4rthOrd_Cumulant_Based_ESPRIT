@@ -11,36 +11,37 @@ Pol_Cum_ground = [1;1;0;1;0;0]/sqrt(3); %ground
 Pol_vegitation = [1;1;1]/sqrt(3);
 Pol_Cum_vegitation = [1;1;1;1;1;1]/sqrt(6); %vegitation
 
-SNR_Distribution = 30;
+SNR_Distribution = 31;
 SNR = linspace(-15,15,SNR_Distribution);
 
-G_O = 10;
+G_O = 20;
 ground_offset = G_O*pi/180; % ground interferomitry offset
 
-Glogal_DistLength = 250;
-V_O_Dist = linspace(10,89,Glogal_DistLength);
+VO_DistLength = 80;
+V_O_Dist = linspace(10,89,VO_DistLength);
 vegetation_offset = V_O_Dist.*pi/180;    % veg interferomitry offset
 
-eye_2 = linspace(-1,1,Glogal_DistLength);
-eye_4 = linspace(-1,1,Glogal_DistLength);
+eye_distlength = 50;
+eye_2 = linspace(-1,1,eye_distlength);
+eye_4 = linspace(-1,1,eye_distlength);
 
-ground_angle_4 = zeros(SNR_Distribution,Glogal_DistLength,Glogal_DistLength);
-ground_angle_2 = zeros(SNR_Distribution,Glogal_DistLength,Glogal_DistLength);
+ground_angle_4 = zeros(SNR_Distribution,VO_DistLength,eye_distlength);
+ground_angle_2 = zeros(SNR_Distribution,VO_DistLength,eye_distlength);
 
-vegitation_angle_4 = zeros(SNR_Distribution,Glogal_DistLength,Glogal_DistLength);
-vegitation_angle_2 = zeros(SNR_Distribution,Glogal_DistLength,Glogal_DistLength);
+vegitation_angle_4 = zeros(SNR_Distribution,VO_DistLength,eye_distlength);
+vegitation_angle_2 = zeros(SNR_Distribution,VO_DistLength,eye_distlength);
 
-ground_abs_4 = zeros(SNR_Distribution,Glogal_DistLength,Glogal_DistLength);
-ground_abs_2 = zeros(SNR_Distribution,Glogal_DistLength,Glogal_DistLength);
+ground_abs_4 = zeros(SNR_Distribution,VO_DistLength,eye_distlength);
+ground_abs_2 = zeros(SNR_Distribution,VO_DistLength,eye_distlength);
 
-vegitation_abs_4 = zeros(SNR_Distribution,Glogal_DistLength,Glogal_DistLength);
-vegitation_abs_2 = zeros(SNR_Distribution,Glogal_DistLength,Glogal_DistLength);
+vegitation_abs_4 = zeros(SNR_Distribution,VO_DistLength,eye_distlength);
+vegitation_abs_2 = zeros(SNR_Distribution,VO_DistLength,eye_distlength);
 
 %% Matrix Construction
 for SNR_sample = 1:SNR_Distribution
     Noise = (10^(-SNR(SNR_sample)/20))/sqrt(3);
-    for V_O_index = 1:Glogal_DistLength
-        for eye_index = 1:Glogal_DistLength
+    for V_O_index = 1:VO_DistLength
+        for eye_index = 1:eye_distlength
             for unusedvariable = 1:Averaged_samples
                 
                 %% Matrix Construction
@@ -118,28 +119,36 @@ ground_angle_4 = sqrt(ground_angle_4)*180/pi;
 vegitation_angle_4 = sqrt(vegitation_angle_4)*180/pi;
 ground_angle_2 = sqrt(ground_angle_2)*180/pi;
 vegitation_angle_2 = sqrt(vegitation_angle_2)*180/pi;
+%% Permutate
+ground_angle_4 = permute(ground_angle_4,[2 3 1]);
+vegitation_angle_4 = permute(vegitation_angle_4,[2 3 1]);
+ground_angle_2 = permute(ground_angle_2,[2 3 1]);
+vegitation_angle_2 = permute(vegitation_angle_2,[2 3 1]);
+
 %% Plotting Results
+SNRPLOT = SNR_Distribution;
 figure(1);
-meshc(ground_angle_4(30,:,:));title('4th order ground RMS Error');
+
+meshc(ground_angle_4(:,:,SNRPLOT));title('4th order ground RMS Error');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(2);
-meshc(vegitation_angle_4(30,:,:));title('4th order vegetation RMS Error');
+meshc(vegitation_angle_4(:,:,SNRPLOT));title('4th order vegetation RMS Error');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(3)
-meshc(ground_angle_2(30,:,:));title('2nd order ground RMS Error');
+meshc(ground_angle_2(:,:,SNRPLOT));title('2nd order ground RMS Error');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(4)
-meshc(vegitation_angle_2);title('2nd order vegetation RMS Error');
+meshc(vegitation_angle_2(:,:,SNRPLOT));title('2nd order vegetation RMS Error');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(5)
-meshc(ground_abs_4);title('4th order ground coherance');
+meshc(ground_abs_4(:,:,SNRPLOT));title('4th order ground coherance');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(6)
-meshc(vegitation_abs_4);title('4th order vegetation coherance');
+meshc(vegitation_abs_4(:,:,SNRPLOT));title('4th order vegetation coherance');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(7)
-meshc(ground_abs_2);title('2nd order ground coherance');
+meshc(ground_abs_2(:,:,SNRPLOT));title('2nd order ground coherance');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
 figure(8)
-meshc(vegitation_abs_2);title('2nd order vegetation coherance');
+meshc(vegitation_abs_2(:,:,SNRPLOT));title('2nd order vegetation coherance');
 xlabel('vegetation sweep 1-89 degrees');ylabel('ground sweep 1-89 degrees');
