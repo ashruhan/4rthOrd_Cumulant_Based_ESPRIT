@@ -26,7 +26,6 @@ xxref = xx.ref;xxoff = xx.off;
 halfrow = 7; halfcol = 7;
 base = halfrow+halfcol+1;
 Window_optimal = (base)^2;
-eye_4 = -0.099;
 
 ground = zeros(ylength-halfrow,xlength-halfcol);
 vegetation = zeros(ylength-halfrow,xlength-halfcol);
@@ -63,7 +62,12 @@ for row = halfrow+1:ylength-halfrow;
         
         [ Cumulant_11,Cumulant_12] = Cumulant( s1_Noise,s2_Noise ,Window_optimal);
         
-        [eigenvec_4,eigenval_4] = eig(pinv(Cumulant_11 + eye_4*eye(6))*Cumulant_12,'nobalance');
+        [~,eigenvalCov_4] = eig(Cumulant_11,'nobalance');
+        
+        eye_4 = mean(diag(eigenvalCov_4))/max(abs(diag(eigenvalCov_4)))^2;
+        
+        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_4*eye(6)))...
+            *Cumulant_12,'nobalance');
         
         [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');
         

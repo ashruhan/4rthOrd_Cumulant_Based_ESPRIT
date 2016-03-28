@@ -101,14 +101,9 @@ for SNR_sample = fliplr(1:SNR_samples);
         
        [~,eigenvalCov_4] = eig(Cumulant_11,'nobalance');
 
-        eye_4 = (1/(6^2))*sqrt(((eigenvalCov_4(1,1) - 1)^2)....
-            +((eigenvalCov_4(2,2) - 1)^2)....
-            +((eigenvalCov_4(3,3) - 1)^2)....
-            +((eigenvalCov_4(4,4) - 1)^2)....
-            +((eigenvalCov_4(5,5) - 1)^2)....
-            +((eigenvalCov_4(6,6) - 1)^2));
+        eye_4 = mean(diag(eigenvalCov_4))/max(abs(diag(eigenvalCov_4)))^2;
         
-        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 - eye_4*eye(6)))...
+        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_4*eye(6)))...
             *Cumulant_12,'nobalance');
         
         polfilter_4 = abs(Pol_Cum_ground'*eigenvec_4);
@@ -143,7 +138,7 @@ vegitation_angle_rmse_4 = sqrt(vegitation_angle_rmse_4)*180/pi;
 %% Plotting Results
 figure(1);
 title('4rth Order ESPRITInterferometric Phases');
-xlabel('SNR (dB)');ylabel('Interferometric Phase (Degrees)');
+xlabel('SNR (dB)');ylabel('Interferometric Phase (degrees)');
 hold on;
 plot(SNR,(-ground_angle_4)*180/pi,'bx');
 plot(SNR,(-vegitation_angle_4)*180/pi,'gx');
@@ -156,7 +151,7 @@ hold off
 
 figure(2);
 title('2nd Order ESPRIT Interferometric Phases');
-xlabel('SNR (dB)');ylabel('Interferometric Phase (Degrees)');
+xlabel('SNR (dB)');ylabel('Interferometric Phase (degrees)');
 hold on;
 plot(SNR,(-ground_angle_2)*180/pi,'bo');
 plot(SNR,(-vegitation_angle_2)*180/pi,'go');
@@ -166,7 +161,7 @@ axis([-15,15,G_O-5,V_O+5])
 legend('2nd Order Ground Estimate','2nd Order Vegetation Estimate',...
     '2nd Order Ground Actual','2nd Order Vegetation Actual','Location','east')
 hold off
-%%
+
 figure(3);
 title('4rth Order ESPRIT Coherance');
 xlabel('SNR (dB)');ylabel('Magnitude');
@@ -176,7 +171,7 @@ plot(SNR,vegitation_abs_4,'gx');
 axis([-15,15,0,2])
 legend('4rth Order Ground','4rth Order Vegetation','Location','northwest')
 hold off
-%%
+
 figure(4);
 title('2nd Order ESPRIT Coherance');
 xlabel('SNR (dB)');ylabel('Magnitude');
@@ -203,7 +198,7 @@ plot(SNR,ground_angle_rmse_2,'bo')
 plot(SNR,vegitation_angle_rmse_2,'go')
 legend('2nd Order Ground','2nd Order Vegetaion','Location','northwest')
 hold off
-%%
+
 figure(7)
 title('4rth Order ESPRIT RMS Error vs Coherence');
 xlabel('RMS Error (degrees)');ylabel('Magnitude');
@@ -214,7 +209,7 @@ axis([0,60,0,3])
 legend('4rth Order Ground','4rth Order Vegetaion','Location','northwest');
 legend('4rth Order Ground','4rth Order Vegetation','Location','northwest');
 hold off
-%%
+
 figure(8)
 title('2nd Order ESPRIT RMS Error vs Coherence');
 xlabel('RMS Error (degrees)');ylabel('Magnitude');
@@ -231,5 +226,4 @@ hold on;
 plot(SNR,10*log10(vegitation_angle_rmse_4),'k')
 plot(SNR,10*log10(vegitation_angle_rmse_2),'b')
 legend('4rth Order Vegetation','2nd Order Vegetaion','Location','northwest')
-
 hold off
