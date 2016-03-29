@@ -27,8 +27,8 @@ halfrow = 7; halfcol = 7;
 base = halfrow+halfcol+1;
 Window_optimal = (base)^2;
 
-ground = zeros(ylength-halfrow,xlength-halfcol);
-vegetation = zeros(ylength-halfrow,xlength-halfcol);
+ground_4 = zeros(ylength-halfrow,xlength-halfcol);
+vegetation_4 = zeros(ylength-halfrow,xlength-halfcol);
 %% Cumulant Martix Calculations
 %%%%%%%%%%%%%%%%%%%%%Pull rand line%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for row = halfrow+1:ylength-halfrow;
@@ -60,53 +60,92 @@ for row = halfrow+1:ylength-halfrow;
         s2_Noise(2,:) = sv2;
         s2_Noise(3,:) = sx2;
         
-        [ Cumulant_11,Cumulant_12] = Cumulant( s1_Noise,s2_Noise ,Window_optimal);
+       index=[1 1
+            2 2
+            3 3
+            1 2
+            1 3
+            2 3];
         
-        [~,eigenvalCov_4] = eig(Cumulant_11,'nobalance');
+        S1_2 = [s1_Noise(1,:)
+            s1_Noise(2,:)
+            s1_Noise(3,:)];
+        
+        S2_2 = [s2_Noise(1,:)
+            s2_Noise(2,:)
+            s2_Noise(3,:)];
+        
+        S1_4 = [s1_Noise(1,:).*s1_Noise(1,:)
+            s1_Noise(2,:).*s1_Noise(2,:)
+            s1_Noise(3,:).*s1_Noise(3,:)
+            s1_Noise(1,:).*s1_Noise(2,:)
+            s1_Noise(1,:).*s1_Noise(3,:)
+            s1_Noise(2,:).*s1_Noise(3,:)];
+        
+        S2_4 = [s2_Noise(1,:).*s2_Noise(1,:)
+            s2_Noise(2,:).*s2_Noise(2,:)
+            s2_Noise(3,:).*s2_Noise(3,:)
+            s2_Noise(1,:).*s2_Noise(2,:)
+            s2_Noise(1,:).*s2_Noise(3,:)
+            s2_Noise(2,:).*s2_Noise(3,:)];
+        
+        R1_2 = S1_2*S1_2'/Window_optimal;
+        R2_2 = S1_2*S2_2'/Window_optimal;
+        
+        R10_2 = S1_2*S1_2.'/Window_optimal;
+        R20_2 = S2_2*S2_2.'/Window_optimal;
+        
+        R1_4 = S1_4*S1_4'/Window_optimal;
+        R2_4 = S1_4*S2_4'/Window_optimal;
+        
+        for m = 1:6
+            for n = 1:6
+                
+                R1_4(m,n)= R1_4(m,n) - R10_2(index(m,1),index(m,2))*R10_2(index(n,1),index(n,2))...
+                    - R1_2(index(m,1),index(n,1))*R1_2(index(m,2),index(n,2))...
+                    - R1_2(index(m,1),index(n,2))*R1_2(index(m,2),index(n,1));
+                
+                R2_4(m,n)= R2_4(m,n) - R10_2(index(m,1),index(m,2))*R20_2(index(n,1),index(n,2))...
+                    - R2_2(index(m,1),index(n,1))*R2_2(index(m,2),index(n,2))...
+                    - R2_2(index(m,1),index(n,2))*R2_2(index(m,2),index(n,1));
+                
+            end
+        end
+        
+        [~,eigenvalCov_4] = eig(R1_4,'nobalance');
         
         eye_4 = mean(diag(eigenvalCov_4))/max(abs(diag(eigenvalCov_4)))^2;
         
-        [eigenvec_4,eigenval_4] = eig((pinv(Cumulant_11 + eye_4*eye(6)))...
-            *Cumulant_12,'nobalance');
+        [eigenvec_4,eigenval_4] = eig((pinv(R1_4 + eye_4*eye(6)))*R2_4,'nobalance');
         
         [~,srt_4] = sort(abs(diag(eigenval_4)),'descend');
         
         LeigTemp  = (abs(eigenval_4(srt_4(1),srt_4(1))))^2....
-            *(abs(eigenvec_4(1,srt_4(1)))^2....
-            + abs(eigenvec_4(2,srt_4(1)))^2....
-            + abs(eigenvec_4(4,srt_4(1)))^2);
+            *(abs(eigenvec_4(3,srt_4(1)))^2....
+            + abs(eigenvec_4(5,srt_4(1)))^2....
+            + abs(eigenvec_4(6,srt_4(1)))^2);
         
         SLeigTemp = (abs(eigenval_4(srt_4(2),srt_4(2))))^2....
-            *(abs(eigenvec_4(1,srt_4(2)))^2....
-            + abs(eigenvec_4(2,srt_4(2)))^2....
-            + abs(eigenvec_4(4,srt_4(2)))^2);
+            *(abs(eigenvec_4(3,srt_4(2)))^2....
+            + abs(eigenvec_4(5,srt_4(2)))^2....
+            + abs(eigenvec_4(6,srt_4(2)))^2);
         
         if LeigTemp >= SLeigTemp
             
-            vegetation(row,col) = eigenval_4(srt_4(2),srt_4(2));
+            vegetation_4(row,col) = eigenval_4(srt_4(1),srt_4(1));
             
-            ground(row,col) = eigenval_4(srt_4(1),srt_4(1));
+            ground_4(row,col) = eigenval_4(srt_4(2),srt_4(2));
             
         else
             
-            vegetation(row,col) = eigenval_4(srt_4(1),srt_4(1));
-            ground(row,col) = eigenval_4(srt_4(2),srt_4(2));
+            vegetation_4(row,col) = eigenval_4(srt_4(2),srt_4(2));
+            ground_4(row,col) = eigenval_4(srt_4(1),srt_4(1));
         end
     end
 end
 %% Plotting gv Results
-[x,y] = size(ground);
-Lreshape = x*y;
-ground_abs_4(1:Lreshape,1) = reshape((abs(ground)),Lreshape,1);
-ground_angle_4(1:Lreshape,1) = reshape(0.5*angle(ground),Lreshape,1);
-vegetation_abs_4(1:Lreshape,1) = reshape((abs(vegetation)),Lreshape,1);
-vegetation_angle_4(1:Lreshape,1) = reshape(0.5*angle(vegetation ),Lreshape,1);
-
-figure(1); imagesc(0.5*angle(ground)); title('4th Ord angle(g)');
-figure(2); imagesc(0.5*angle(vegetation)); title('4th Ord angle(v)');
-figure(3); imagesc(sqrt(abs(ground)),[0 10]); title('4th Ord abs(g)');
-figure(4); imagesc(sqrt(abs(vegetation)),[0 10]); title('4th Ord abs(v)');
-% figure(4); hist(ground_abs_4,linspace(0,max(ground_abs_4),100));
-% figure(5); hist(ground_angle_4,linspace(-pi,pi,100));
-% figure(6); hist(vegetation_abs_4, linspace(0,max(vegetation_abs_4),100));
-% figure(7); hist(vegetation_angle_4,linspace(-pi,pi,100));
+figure(1); imagesc(angle(ground_4)); title('4th Order Ground Interferometric Phase');
+figure(2); imagesc(angle(vegetation_4)); title('4th Order Vegetation Interferometric Phase');
+figure(3); imagesc(angle(vegetation_4) - angle(ground_4)); title('4th Order V-G');
+figure(4); imagesc(abs(ground_4)); title('4th Order Ground Magnitude');
+figure(5); imagesc(abs(vegetation_4)); title('4th Order Vegetation Magnitude');

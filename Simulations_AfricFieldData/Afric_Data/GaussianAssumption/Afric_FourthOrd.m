@@ -71,47 +71,43 @@ for row = r+1:ylength-r;
         [~,srt_angle_4] = sort(abs(angle(diag(eigenval_4(srt_abs_4(1:3),srt_abs_4(1:3))))),'descend');
         
         LeigTemp  = (abs(eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)))))^2....
-            *(abs(eigenvec_4(1,srt_abs_4(srt_angle_4(1))))^2....
-            + abs(eigenvec_4(2,(srt_angle_4(1))))^2....
-            + abs(eigenvec_4(4,srt_abs_4(srt_angle_4(1))))^2);
+            *(abs(eigenvec_4(3,srt_abs_4(srt_angle_4(1))))^2....
+            + abs(eigenvec_4(5,(srt_angle_4(1))))^2....
+            + abs(eigenvec_4(6,srt_abs_4(srt_angle_4(1))))^2);
         
         SLeigTemp = (abs(eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)))))^2....
-            *(abs(eigenvec_4(1,srt_abs_4(srt_angle_4(3))))^2....
-            + abs(eigenvec_4(2,srt_abs_4(srt_angle_4(3))))^2....
-            + abs(eigenvec_4(4,srt_abs_4(srt_angle_4(3))))^2);
+            *(abs(eigenvec_4(3,srt_abs_4(srt_angle_4(3))))^2....
+            + abs(eigenvec_4(5,srt_abs_4(srt_angle_4(3))))^2....
+            + abs(eigenvec_4(6,srt_abs_4(srt_angle_4(3))))^2);
         
         if ((LeigTemp >= SLeigTemp)&&(abs(eigenvec_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1))))...
                 >= abs(eigenvec_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3))))) )
             
-            vegetation_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)));
+            ground_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)));
             
-            ground_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)));
+            vegetation_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)));
             
         elseif((LeigTemp >= SLeigTemp)&&(abs(eigenvec_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3))))...
                 >= abs(eigenvec_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1))))) )
             
-            vegetation_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)));
+            ground_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)));
             
-            ground_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)));
+            vegetation_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)));
             
             
         elseif (SLeigTemp >= LeigTemp)
             
-            vegetation_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)));
+            ground_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(1)),srt_abs_4(srt_angle_4(1)));
             
-            ground_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)));
+            vegetation_4(row,col) = eigenval_4(srt_abs_4(srt_angle_4(3)),srt_abs_4(srt_angle_4(3)));
             
         end
         
     end
 end
 %% Plotting gv Results
-figure(1); imagesc(0.5*angle(ground_4)); title('4th Ord angle(g)');
-figure(2); imagesc(0.5*angle(vegitation_4)); title('4th Ord angle(v)');
-figure(3); imagesc(0.5*angle(vegitation_4) - 0.5*angle(ground_4)); title('4th Ord v-g');
-figure(4); imagesc(abs(ground_4)); title('4th Ord abs(g)');
-figure(5); imagesc(abs(vegitation_4)); title('4th Ord abs(v)');
-
-
-figure(6); imagesc(sqrt(abs(ground_4))); title('4th Ord abs(g)');
-figure(7); imagesc(sqrt(abs(vegitation_4))); title('4th Ord abs(v)');
+figure(1); imagesc(angle(ground_4)); title('4th Order Ground Interferometric Phase');
+figure(2); imagesc(angle(vegetation_4)); title('4th Order Vegetation Interferometric Phase');
+figure(3); imagesc(angle(vegetation_4) - angle(ground_4)); title('4th Order V-G');
+figure(4); imagesc(abs(ground_4)); title('4th Order Ground Magnitude');
+figure(5); imagesc(abs(vegetation_4)); title('4th Order Vegetation Magnitude');

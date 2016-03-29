@@ -75,7 +75,8 @@ for row = fliplr(r+1:ylength-r);
 end
 
 %% Plotting Results
-figure(21); imagesc(angle(ground_2)); title('2nd Ord angle(g)');
-figure(22); imagesc(angle(vegetation_2)); title('2nd Ord angle(v)');
-figure(24); imagesc(abs(ground_2)); title('2nd Ord abs(g)');
-figure(25); imagesc(abs(vegetation_2)); title('2nd Ord abs(v)');
+figure(1); imagesc(angle(ground_2)); title('2nd Order Ground Interferometric Phase');
+figure(2); imagesc(angle(vegetation_2)); title('2nd Order Vegetation Interferometric Phase');
+figure(3); imagesc(angle(vegetation_2) - angle(ground_2)); title('4th Order V-G');
+figure(4); imagesc(abs(ground_2)); title('2nd Order Ground Magnitude');
+figure(5); imagesc(abs(vegetation_2)); title('2nd Order Vegetation Magnitude');
